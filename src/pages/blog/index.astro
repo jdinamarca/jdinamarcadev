@@ -1,0 +1,199 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const allTags = [...new Set(posts.flatMap((p) => p.data.tags))].sort();
+---
+
+<BaseLayout
+  title="Blog"
+  description="Escritos sobre arquitectura de software, observabilidad, sistemas distribuidos y divulgación técnica."
+>
+  <section class="shell section">
+    <SectionHeading index="§02" label="Divulgación" title="El blog" />
+    <p class="lead blog-intro">
+      Notas de investigación y campo sobre cómo se sostienen los sistemas reales.
+      Decisiones, trampas y lecciones —escritas para compartirse.
+    </p>
+
+    {
+      allTags.length > 0 && (
+        <ul class="tagbar reveal" aria-label="Temas">
+          <li class="tagbar__label">TEMAS</li>
+          {allTags.map((t) => (
+            <li>
+              <span class="tagbar__tag">{t}</span>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+
+    <ul class="bloglist">
+      {
+        posts.map((post, i) => (
+          <li class="bloglist__item reveal">
+            <a href={`/blog/${post.id}`} class="bloglist__link group">
+              <div class="bloglist__row bloglist__row--top">
+                <span class="bloglist__no">
+                  {String(posts.length - i).padStart(2, "0")}
+                </span>
+                <span class="draw-rule bloglist__rule" aria-hidden="true" />
+                <span class="bloglist__date">
+                  <FormattedDate date={post.data.pubDate} format="short" />
+                </span>
+              </div>
+              <div class="bloglist__row bloglist__row--main">
+                <h2 class="bloglist__title">{post.data.title}</h2>
+                <span class="bloglist__arrow" aria-hidden="true">→</span>
+              </div>
+              <p class="bloglist__desc">{post.data.description}</p>
+              {post.data.tags.length > 0 && (
+                <ul class="bloglist__tags">
+                  {post.data.tags.map((t) => (
+                    <li>{t}</li>
+                  ))}
+                </ul>
+              )}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(2rem, 1rem + 4vw, 4.5rem);
+  }
+  .blog-intro {
+    max-width: 52ch;
+    margin: 1rem 0 2.5rem;
+  }
+  .tagbar {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 2.5rem;
+    padding: 0;
+  }
+  .tagbar__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+    margin-right: 0.5rem;
+  }
+  .tagbar__tag {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    border: 1px solid var(--color-line);
+    padding: 0.2rem 0.5rem;
+    color: var(--color-ink-soft);
+  }
+  .bloglist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-ink);
+  }
+  .bloglist__item {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .bloglist__link {
+    display: block;
+    padding: 1.5rem 0;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .bloglist__row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .bloglist__row--top {
+    margin-bottom: 0.5rem;
+  }
+  .bloglist__no {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    color: var(--color-signal);
+    flex: none;
+  }
+  .bloglist__rule {
+    flex: 1;
+    height: 1px;
+    background: var(--color-ink);
+    opacity: 0.2;
+    transform: scaleX(0.3);
+    transform-origin: left;
+    transition: transform 0.45s var(--ease-blueprint), opacity 0.45s var(--ease-blueprint);
+  }
+  .group:hover .bloglist__rule {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  .bloglist__date {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    color: var(--color-ink-faint);
+    flex: none;
+  }
+  .bloglist__row--main {
+    justify-content: space-between;
+  }
+  .bloglist__title {
+    font-size: var(--text-h2);
+    margin: 0;
+    transition: color 0.2s var(--ease-blueprint);
+  }
+  .group:hover .bloglist__title {
+    color: var(--color-signal-deep);
+  }
+  .bloglist__arrow {
+    font-family: var(--font-mono);
+    color: var(--color-ink-faint);
+    transition: transform 0.2s var(--ease-blueprint), color 0.2s var(--ease-blueprint);
+  }
+  .group:hover .bloglist__arrow {
+    transform: translateX(5px);
+    color: var(--color-signal);
+  }
+  .bloglist__desc {
+    color: var(--color-ink-soft);
+    margin: 0.75rem 0 0;
+    max-width: 60ch;
+  }
+  .bloglist__tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.9rem 0 0;
+    padding: 0;
+  }
+  .bloglist__tags li {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-ink-faint);
+  }
+  .bloglist__tags li::before {
+    content: "#";
+    color: var(--color-signal);
+    margin-right: 0.1rem;
+  }
+</style>

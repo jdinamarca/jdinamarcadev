@@ -1,0 +1,52 @@
+---
+import "@fontsource-variable/geist";
+import "@fontsource-variable/jetbrains-mono";
+import "../styles/global.css";
+import { SITE } from "../consts";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const {
+  title = SITE.title,
+  description = SITE.description,
+  image = "/og-default.png",
+} = Astro.props;
+
+const fullTitle = title === SITE.title ? title : `${title} — ${SITE.title}`;
+const ogImage = new URL(image, Astro.site);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta name="generator" content={Astro.generator} />
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={SITE.title}
+  href={new URL("rss.xml", Astro.site)}
+/>
+
+<meta property="og:type" content="website" />
+<meta property="og:locale" content={SITE.locale} />
+<meta property="og:site_name" content={SITE.title} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:image" content={ogImage} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<meta name="theme-color" content="#e8e8e6" />

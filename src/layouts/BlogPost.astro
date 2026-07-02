@@ -1,0 +1,161 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  post: CollectionEntry<"blog">;
+  readingTime?: string;
+}
+const { post, readingTime } = Astro.props;
+const { data } = post;
+---
+
+<BaseLayout title={data.title} description={data.description} image={data.heroImage}>
+  <article class="post">
+    <header class="shell post__header">
+      <a href="/blog" class="post__back">← Índice del blog</a>
+      <p class="label post__kicker">§ Publicación</p>
+      <h1 class="post__title">{data.title}</h1>
+      <p class="lead post__desc">{data.description}</p>
+
+      <div class="post__meta">
+        <span class="post__meta-item">
+          <span class="post__meta-key">Fecha</span>
+          <FormattedDate date={data.pubDate} />
+        </span>
+        {
+          data.updatedDate && (
+            <span class="post__meta-item">
+              <span class="post__meta-key">Actualizado</span>
+              <FormattedDate date={data.updatedDate} />
+            </span>
+          )
+        }
+        {
+          (readingTime || data.readingTime) && (
+            <span class="post__meta-item">
+              <span class="post__meta-key">Lectura</span>
+              {readingTime ?? data.readingTime}
+            </span>
+          )
+        }
+      </div>
+
+      {
+        data.tags.length > 0 && (
+          <ul class="post__tags">
+            {data.tags.map((t) => (
+              <li>{t}</li>
+            ))}
+          </ul>
+        )
+      }
+
+      <span class="draw-rule post__rule" aria-hidden="true"></span>
+    </header>
+
+    <div class="shell post__body">
+      <div class="prose-blueprint">
+        <slot />
+      </div>
+
+      <footer class="post__footer">
+        <hr class="rule" />
+        <p class="label">¿Te resultó útil?</p>
+        <p>
+          <a href="/contacto">Cuéntamelo</a> o
+          <a href="/blog">sigue leyendo</a>.
+        </p>
+      </footer>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post__header {
+    padding-top: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-ink);
+  }
+  .post__back {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-ink-soft);
+  }
+  .post__back:hover {
+    color: var(--color-signal-deep);
+  }
+  .post__kicker {
+    margin-top: 2rem;
+    color: var(--color-signal);
+  }
+  .post__title {
+    font-size: var(--text-h1);
+    margin: 0.5rem 0 1rem;
+    max-width: 18ch;
+  }
+  .post__desc {
+    max-width: 52ch;
+    margin: 0;
+  }
+  .post__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  .post__meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-size: var(--text-meta);
+  }
+  .post__meta-key {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-label);
+    color: var(--color-ink-faint);
+    font-size: var(--text-micro);
+  }
+  .post__tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 1.5rem 0 0;
+    padding: 0;
+  }
+  .post__tags li {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    border: 1px solid var(--color-line);
+    padding: 0.2rem 0.5rem;
+    color: var(--color-ink-soft);
+  }
+  .post__rule {
+    display: block;
+    height: 1px;
+    background: var(--color-ink);
+    margin-top: 2rem;
+  }
+  .post__body {
+    padding-top: 2.5rem;
+  }
+  .prose-blueprint {
+    font-size: var(--text-body);
+    color: var(--color-ink);
+  }
+  .post__footer {
+    max-width: var(--measure);
+    margin-top: 3rem;
+  }
+  .post__footer .rule {
+    margin-bottom: 1.5rem;
+  }
+</style>

@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="404 — No encontrado" description="La página que buscas no existe.">
+  <section class="shell nf">
+    <p class="nf__code" aria-hidden="true">
+      <span>4</span><span class="nf__zero">0</span><span>4</span>
+    </p>
+    <p class="label">§ Error · Fuera de plano</p>
+    <h1 class="nf__title">Esta coordenada no existe.</h1>
+    <p class="lead nf__text">
+      La página que buscas se salió de la grilla. Quizá fue movida, o tal vez
+      nunca formó parte del plano.
+    </p>
+    <div class="nf__cta">
+      <a class="btn-signal" href="/">Volver al inicio <span aria-hidden="true">→</span></a>
+      <a class="btn-ghost" href="/proyectos">Ver portafolio</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: clamp(3rem, 2rem + 6vw, 7rem);
+  }
+  .nf__code {
+    font-family: var(--font-mono);
+    font-size: clamp(5rem, 3rem + 12vw, 12rem);
+    line-height: 1;
+    letter-spacing: var(--tracking-tight);
+    margin: 0 0 1rem;
+    display: flex;
+    gap: 0.05em;
+  }
+  .nf__zero {
+    -webkit-text-stroke: 2px var(--color-ink);
+    color: transparent;
+  }
+  .nf__title {
+    font-size: var(--text-h1);
+    margin: 0.75rem 0 1rem;
+    max-width: 16ch;
+  }
+  .nf__text {
+    max-width: 46ch;
+    margin: 0 0 2rem;
+  }
+  .nf__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+</style>

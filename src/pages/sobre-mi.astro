@@ -1,0 +1,272 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { SITE } from "../consts";
+
+const focus = [
+  {
+    k: "Arquitectura de sistemas",
+    v: "Diseño end-to-end de plataformas distribuidas, con foco en simplicidad y durabilidad.",
+  },
+  {
+    k: "Observabilidad",
+    v: "Telemetría como producto: trazas, métricas y SLOs que sobreviven a incidentes reales.",
+  },
+  {
+    k: "Divulgación técnica",
+    v: "Escribo para reducir la brecha entre decisión técnica y quien debe entenderla.",
+  },
+];
+
+const timeline = [
+  { year: "2025", role: "Arquitecto de Software Líder", org: "Fintech B2B", note: "Plataforma de observabilidad distribuida." },
+  { year: "2024", role: "Arquitecto de Software", org: "Manufactura industrial", note: "Inferencia en el borde a escala." },
+  { year: "2023", role: "Arquitecto de Datos", org: "Investigación clínica", note: "Lakehouse y gobierno de datos." },
+  { year: "2018", role: "Ingeniero Senior", org: "Producto SaaS", note: "Fundaciones de plataforma multi-tenant." },
+];
+---
+
+<BaseLayout
+  title="Sobre mí"
+  description={`${SITE.author} — ${SITE.role}. Investigación, arquitectura de sistemas y divulgación técnica.`}
+>
+  <section class="shell section">
+    <SectionHeading index="§03" label="Perfil" title="Sobre mí" />
+
+    <div class="about-grid">
+      <div class="about-portrait">
+        <div class="about-portrait__frame focus-corners" aria-hidden="true">
+          <span class="about-portrait__mark">JD</span>
+          <span class="about-portrait__grid"></span>
+        </div>
+        <p class="label about-portrait__cap">Fig. 01 — {SITE.author}</p>
+      </div>
+
+      <div class="about-bio">
+        <p class="about-lede">
+          Soy {SITE.author}, {SITE.role.toLowerCase()}. {SITE.tagline}
+        </p>
+        <p>
+          Trabajo en el cruce entre la arquitectura técnica y la comunicación:
+          diseñar sistemas que se sostienen, y explicarlos con claridad. Creo que
+          la documentación de decisiones es parte del código, y que un buen sistema
+          se reconoce por lo que <em>no</em> necesita reimventarse cada trimestre.
+        </p>
+        <p>
+          Investigo y escribo sobre sistemas distribuidos, observabilidad y la
+          cultura técnica que permite que los equipos construyan cosas que duran.
+        </p>
+
+        <div class="about-cta">
+          <a class="btn-signal" href="/contacto">
+            Hablemos <span aria-hidden="true">→</span>
+          </a>
+          <a class="btn-ghost" href="/blog">Leer el blog</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="shell section">
+    <SectionHeading index="§04" label="Áreas" title="En qué me enfoco" />
+    <ul class="focuslist">
+      {
+        focus.map((f, i) => (
+          <li class="focuslist__item reveal">
+            <span class="focuslist__no">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <h3 class="focuslist__title">{f.k}</h3>
+              <p class="focuslist__desc">{f.v}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="shell section">
+    <SectionHeading index="§05" label="Trayectoria" title="Línea de tiempo" />
+    <ol class="timeline">
+      {
+        timeline.map((t) => (
+          <li class="timeline__item reveal">
+            <span class="timeline__year">{t.year}</span>
+            <span class="draw-rule timeline__rule" aria-hidden="true" />
+            <div class="timeline__body">
+              <h3 class="timeline__role">{t.role}</h3>
+              <p class="timeline__org">{t.org}</p>
+              <p class="timeline__note">{t.note}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(2.5rem, 1.5rem + 4vw, 4.5rem);
+  }
+  .section + .section {
+    padding-top: 0;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    margin-top: 1rem;
+  }
+  @media (min-width: 860px) {
+    .about-grid {
+      grid-template-columns: 320px 1fr;
+      gap: 3.5rem;
+    }
+  }
+  .about-portrait__frame {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .about-portrait__mark {
+    font-size: clamp(3rem, 1.5rem + 6vw, 6rem);
+    font-weight: 700;
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-ink);
+    position: relative;
+    z-index: 1;
+  }
+  .about-portrait__grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+        to right,
+        var(--color-grid) 1px,
+        transparent 1px
+      ),
+      linear-gradient(var(--color-grid) 1px, transparent 1px);
+    background-size: calc(100% / 8) 100%, 100% 1.5rem;
+  }
+  .about-portrait__cap {
+    margin-top: 0.6rem;
+    font-size: var(--text-micro);
+  }
+  .about-lede {
+    font-size: var(--text-h3);
+    line-height: 1.25;
+    letter-spacing: var(--tracking-snug);
+    margin-top: 0;
+    max-width: 40ch;
+  }
+  .about-bio p {
+    max-width: 60ch;
+  }
+  .about-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .focuslist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1px;
+    background: var(--color-line);
+    border: 1px solid var(--color-line);
+  }
+  @media (min-width: 768px) {
+    .focuslist {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .focuslist__item {
+    background: var(--color-paper);
+    padding: 1.5rem;
+    display: flex;
+    gap: 1rem;
+  }
+  .focuslist__no {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    color: var(--color-signal);
+    flex: none;
+  }
+  .focuslist__title {
+    font-size: var(--text-h3);
+    margin: 0 0 0.5rem;
+  }
+  .focuslist__desc {
+    color: var(--color-ink-soft);
+    margin: 0;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .timeline__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem 1.5rem;
+    padding-block: 1.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  @media (min-width: 768px) {
+    .timeline__item {
+      grid-template-columns: 5rem 1fr 2fr;
+      align-items: baseline;
+    }
+  }
+  .timeline__year {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    color: var(--color-signal);
+    letter-spacing: var(--tracking-mono);
+  }
+  .timeline__rule {
+    grid-column: 1 / -1;
+    height: 1px;
+    background: var(--color-ink);
+    transform-origin: left;
+  }
+  @media (min-width: 768px) {
+    .timeline__rule {
+      grid-column: auto;
+    }
+  }
+  .timeline__body {
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 768px) {
+    .timeline__body {
+      grid-column: auto;
+    }
+  }
+  .timeline__role {
+    font-size: var(--text-h3);
+    margin: 0 0 0.15rem;
+  }
+  .timeline__org {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    color: var(--color-ink-soft);
+    margin: 0 0 0.3rem;
+  }
+  .timeline__note {
+    color: var(--color-ink-soft);
+    margin: 0;
+    max-width: 50ch;
+  }
+</style>

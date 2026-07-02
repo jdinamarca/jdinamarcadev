@@ -1,0 +1,160 @@
+---
+import type { CollectionEntry } from "astro:content";
+const { project, index = 1 } = Astro.props as {
+  project: CollectionEntry<"projects">;
+  index?: number;
+};
+const { data, id } = project;
+const idx = String(index).padStart(2, "0");
+const href = `/proyectos/${id}`;
+---
+
+<article class="pcard group">
+  <a href={href} class="pcard__link" aria-label={`${data.title} — ver caso de estudio`}>
+    <div class="pcard__media focus-corners">
+      {
+        data.cover ? (
+          <img
+            src={data.cover}
+            alt={data.coverAlt ?? data.title}
+            loading="lazy"
+            decoding="async"
+            width="800"
+            height="500"
+          />
+        ) : (
+          <div class="pcard__placeholder" aria-hidden="true">
+            <span class="pcard__placeholder-idx">{idx}</span>
+            <span class="pcard__placeholder-grid" />
+          </div>
+        )
+      }
+      <span class="pcard__year">{data.year}</span>
+    </div>
+
+    <div class="pcard__body">
+      <div class="pcard__topline">
+        <span class="pcard__idx">PROY_{idx}</span>
+        <span class="draw-rule pcard__rule" aria-hidden="true"></span>
+      </div>
+      <h3 class="pcard__title">{data.title}</h3>
+      <p class="pcard__summary">{data.summary}</p>
+      {
+        data.stack.length > 0 && (
+          <ul class="pcard__stack">
+            {data.stack.slice(0, 4).map((s) => (
+              <li>{s}</li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </a>
+</article>
+
+<style>
+  .pcard {
+    position: relative;
+  }
+  .pcard__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+  .pcard__media {
+    position: relative;
+    aspect-ratio: 8 / 5;
+    overflow: hidden;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+  }
+  .pcard__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s var(--ease-blueprint);
+  }
+  .group:hover .pcard__media img {
+    transform: scale(1.03);
+  }
+  .pcard__placeholder {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background:
+      linear-gradient(var(--color-grid) 1px, transparent 1px) 0 0 / 100% 1.5rem,
+      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px) 0 0 / 1.5rem 100%,
+      var(--color-paper);
+  }
+  .pcard__placeholder-idx {
+    font-family: var(--font-mono);
+    font-size: clamp(2rem, 1rem + 4vw, 4rem);
+    color: var(--color-ink-faint);
+    letter-spacing: var(--tracking-tight);
+  }
+  .pcard__year {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.6rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: var(--tracking-mono);
+    background: var(--color-ink);
+    color: var(--color-concrete);
+    padding: 0.2rem 0.4rem;
+  }
+  .pcard__body {
+    padding-top: 1rem;
+  }
+  .pcard__topline {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+  .pcard__idx {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+    flex: none;
+  }
+  .pcard__rule {
+    flex: 1;
+    height: 1px;
+    background: var(--color-ink);
+  }
+  .pcard__title {
+    font-size: var(--text-h3);
+    margin: 0 0 0.4rem;
+    transition: color 0.2s var(--ease-blueprint);
+  }
+  .group:hover .pcard__title {
+    color: var(--color-signal-deep);
+  }
+  .pcard__summary {
+    color: var(--color-ink-soft);
+    margin: 0 0 0.85rem;
+    max-width: 48ch;
+  }
+  .pcard__stack {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .pcard__stack li {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    border: 1px solid var(--color-line);
+    padding: 0.2rem 0.45rem;
+    color: var(--color-ink-soft);
+  }
+</style>

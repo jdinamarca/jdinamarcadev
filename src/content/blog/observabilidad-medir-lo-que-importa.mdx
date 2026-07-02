@@ -1,0 +1,25 @@
+---
+title: "Observabilidad: medir lo que importa antes de lo que brilla"
+description: "Una guía práctica para diseñar telemetría que sobreviva a incidentes reales: del muestreo a los SLOs, sin caer en la trampa de las métricas decorativas."
+pubDate: 2025-03-28
+tags: ["observabilidad", "sre", "sistemas"]
+readingTime: "9 min"
+heroImage: "/images/covers/cover-05.svg"
+heroAlt: "Esquema de embudo de telemetría"
+---
+
+La telemetría fácil de coleccionar suele ser la menos útil. Recolectar todo es un antipatrón disfrazado de rigor.
+
+## Tres carriles, tres estrategias
+
+Tratas, métricas y logs tienen vidas distintas. Mezclarlas en un solo silo es garantía de ruido y costo.
+
+```text
+Trazas    → muestreo de cola (tail-sampling) por error/latencia
+Métricas  → agregación en fuente, cardinalidad controlada
+Logs      > muestreo estructurado con nivel y contexto
+```
+
+## SLOs como brújula
+
+Sin un objetivo de servicio explícito, cada dashboard se convierte en arte abstracto. Un buen SLO responde a una pregunta de negocio, no a una curiosidad técnica.

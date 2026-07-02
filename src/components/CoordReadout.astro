@@ -1,0 +1,123 @@
+---
+import { SITE } from "../consts";
+
+/**
+ * Readout técnico fijo (estilo CAD/consola).
+ * Muestra posición del cursor y profundidad de scroll.
+ * Es decorativo/informativo: aria-hidden, no bloquea lectura.
+ */
+---
+
+<div
+  class="coord-readout"
+  aria-hidden="true"
+  data-coord-readout
+>
+  <div class="cr-row">
+    <span class="cr-key">X</span>
+    <span class="cr-val" data-cr-x>0000</span>
+    <span class="cr-sep">/</span>
+    <span class="cr-key">Y</span>
+    <span class="cr-val" data-cr-y>0000</span>
+  </div>
+  <div class="cr-row">
+    <span class="cr-key">SCROLL</span>
+    <span class="cr-val" data-cr-scroll>0%</span>
+  </div>
+  <div class="cr-row cr-row--muted">
+    <span class="cr-dot" aria-hidden="true"></span>
+    <span class="cr-val">SISTEMA · {SITE.coords.x} · {SITE.coords.y}</span>
+  </div>
+</div>
+
+<style>
+  .coord-readout {
+    position: fixed;
+    right: clamp(1rem, 0.8rem + 1vw, 1.75rem);
+    bottom: clamp(1rem, 0.8rem + 1vw, 1.75rem);
+    z-index: 60;
+    display: none;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.6rem 0.75rem;
+    background: color-mix(in srgb, var(--color-paper) 86%, transparent);
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--color-line);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.4;
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-ink-soft);
+    pointer-events: none;
+    user-select: none;
+  }
+  @media (min-width: 768px) {
+    .coord-readout {
+      display: flex;
+    }
+  }
+  .cr-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+  }
+  .cr-row--muted {
+    opacity: 0.7;
+  }
+  .cr-key {
+    color: var(--color-ink-faint);
+    min-width: 3.2em;
+  }
+  .cr-val {
+    color: var(--color-ink);
+  }
+  .cr-sep {
+    color: var(--color-ink-faint);
+  }
+  .cr-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--color-signal);
+    border-radius: 50%;
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-coord-readout]");
+  if (root) {
+    const xEl = root.querySelector<HTMLElement>("[data-cr-x]");
+    const yEl = root.querySelector<HTMLElement>("[data-cr-y]");
+    const sEl = root.querySelector<HTMLElement>("[data-cr-scroll]");
+    const pad = (n: number, len = 4) => String(Math.round(n)).padStart(len, "0");
+
+    let ticking = false;
+    let mx = window.innerWidth / 2;
+    let my = window.innerHeight / 2;
+
+    const update = () => {
+      ticking = false;
+      if (xEl) xEl.textContent = pad(mx);
+      if (yEl) yEl.textContent = pad(my);
+      const h = document.documentElement;
+      const max = h.scrollHeight - h.clientHeight;
+      const pct = max > 0 ? Math.min(100, (h.scrollTop / max) * 100) : 0;
+      if (sEl) sEl.textContent = `${Math.round(pct)}%`;
+    };
+    const raf = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+
+    window.addEventListener("mousemove", (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+      raf();
+    });
+    window.addEventListener("scroll", raf, { passive: true });
+    window.addEventListener("resize", raf);
+    update();
+  }
+</script>

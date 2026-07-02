@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500" role="img" aria-label="Esquema de embudo de telemetría">
+  <rect width="800" height="500" fill="#e8e8e6"/>
+  <g stroke="#0e0e0e" stroke-opacity="0.08" stroke-width="1">
+    <path d="M0 62.5 H800 M0 125 H800 M0 187.5 H800 M0 250 H800 M0 312.5 H800 M0 375 H800 M0 437.5 H800"/>
+    <path d="M66.6 0 V500 M133.3 0 V500 M200 0 V500 M266.6 0 V500 M333.3 0 V500 M400 0 V500 M466.6 0 V500 M533.3 0 V500 M600 0 V500 M666.6 0 V500 M733.3 0 V500"/>
+  </g>
+  <g fill="none" stroke="#0e0e0e" stroke-width="2">
+    <path d="M120 100 L680 100 L520 250 L680 400 L120 400 L280 250 Z"/>
+    <path d="M280 250 L520 250"/>
+  </g>
+  <path d="M150 140 L650 140" stroke="#ff5c00" stroke-width="2"/>
+  <g font-family="monospace" font-size="13" fill="#56564f">
+    <text x="24" y="36">MUESTREO</text>
+    <text x="24" y="480">BLOG · OBSERVABILIDAD</text>
+  </g>
+</svg>

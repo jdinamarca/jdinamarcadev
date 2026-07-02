@@ -1,0 +1,427 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import { getCollection } from "astro:content";
+import { SITE } from "../consts";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+const featured = projects.filter((p) => p.data.featured).slice(0, 3);
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+---
+
+<BaseLayout bareTop>
+  <!-- ============================ HERO ============================ -->
+  <section class="hero" data-hero>
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="hero__glow" data-hero-glow aria-hidden="true"></div>
+
+    <div class="shell hero__inner">
+      <div class="hero__meta">
+        <span class="hero__index">§00</span>
+        <span class="draw-rule hero__rule" aria-hidden="true"></span>
+        <span class="label">Índice · Sistema en línea</span>
+      </div>
+
+      <div class="hero__headline">
+        <p class="label hero__role">{SITE.role}</p>
+        <h1 class="hero__title">
+          <span class="hero__line">Arquitectura</span>
+          <span class="hero__line hero__line--outline">de software</span>
+          <span class="hero__line">que se sostiene.</span>
+        </h1>
+      </div>
+
+      <div class="hero__foot">
+        <p class="lead hero__tagline">{SITE.tagline}</p>
+        <div class="hero__cta">
+          <a class="btn-signal" href="/proyectos">
+            Ver portafolio <span aria-hidden="true">→</span>
+          </a>
+          <a class="btn-ghost" href="/blog">Leer el blog</a>
+        </div>
+      </div>
+
+      <!-- Hoja de especificaciones técnica -->
+      <dl class="herospec" aria-label="Especificaciones">
+        <div>
+          <dt>AÑOS</dt>
+          <dd data-counter data-to="12">12+</dd>
+        </div>
+        <div>
+          <dt>FOCO</dt>
+          <dd>Sistemas distribuidos</dd>
+        </div>
+        <div>
+          <dt>SECTOR</dt>
+          <dd>Fintech · Data · Edge</dd>
+        </div>
+        <div>
+          <dt>BASE</dt>
+          <dd>{SITE.coords.x}</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ====================== PROYECTOS DESTACADOS ====================== -->
+  <section class="shell section">
+    <SectionHeading index="§01" label="Selección" title="Proyectos destacados" />
+    <div class="projects-grid">
+      {featured.map((p, i) => <ProjectCard project={p} index={i + 1} />)}
+    </div>
+    <div class="section__more reveal">
+      <a class="btn-ghost" href="/proyectos">
+        Ver todos los proyectos <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ========================= ESCRITURA RECIENTE ========================= -->
+  <section class="shell section">
+    <SectionHeading index="§02" label="Divulgación" title="Escritura reciente" />
+    <ul class="postlist">
+      {
+        posts.map((post) => (
+          <li class="postlist__item reveal">
+            <a href={`/blog/${post.id}`} class="postlist__link group">
+              <span class="postlist__date">
+                <FormattedDate date={post.data.pubDate} format="short" />
+              </span>
+              <span class="draw-rule postlist__rule" aria-hidden="true" />
+              <span class="postlist__title">{post.data.title}</span>
+              <span class="postlist__arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="section__more reveal">
+      <a class="btn-ghost" href="/blog">
+        Ver todo el blog <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============================ CTA FINAL ============================ -->
+  <section class="shell section">
+    <div class="endcta reveal">
+      <div class="endcta__grid" aria-hidden="true"></div>
+      <p class="label endcta__label">§ Contacto</p>
+      <h2 class="endcta__title">
+        ¿Tienes un sistema que necesita <span class="underline-signal">claridad</span>?
+      </h2>
+      <p class="lead endcta__text">
+        Trabajo en arquitectura, observabilidad y decisiones técnicas que duran.
+        Cuéntame qué estás construyendo.
+      </p>
+      <a class="btn-signal" href="/contacto">
+        Iniciar conversación <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ---------- HERO ---------- */
+  .hero {
+    position: relative;
+    border-bottom: 1px solid var(--color-ink);
+    overflow: hidden;
+    padding-top: clamp(2rem, 1rem + 4vw, 4.5rem);
+  }
+  .hero__grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+        to right,
+        var(--color-grid) 1px,
+        transparent 1px
+      ),
+      linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
+    background-size: calc(100% / 12) 100%, 100% 1.5rem;
+    pointer-events: none;
+  }
+  .hero__glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+      320px circle at var(--gx, 50%) var(--gy, 40%),
+      color-mix(in srgb, var(--color-signal) 14%, transparent),
+      transparent 70%
+    );
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-blueprint);
+  }
+  .hero:hover .hero__glow {
+    opacity: 1;
+  }
+  .hero__inner {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(2rem, 1rem + 4vw, 4rem);
+    padding-bottom: clamp(3rem, 2rem + 5vw, 6rem);
+  }
+  .hero__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .hero__index {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    color: var(--color-signal);
+    flex: none;
+  }
+  .hero__rule {
+    flex: 1;
+    height: 1px;
+    background: var(--color-ink);
+    max-width: 40rem;
+  }
+  .hero__role {
+    margin-bottom: 1rem;
+  }
+  .hero__title {
+    font-size: var(--text-display);
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+    margin: 0;
+  }
+  .hero__line {
+    display: block;
+  }
+  .hero__line--outline {
+    -webkit-text-stroke: 1.5px var(--color-ink);
+    color: transparent;
+  }
+  .hero__foot {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  @media (min-width: 860px) {
+    .hero__foot {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 3rem;
+    }
+    .hero__tagline {
+      max-width: 42ch;
+    }
+  }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    flex: none;
+  }
+
+  .herospec {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--color-line);
+    border: 1px solid var(--color-line);
+    margin: 0;
+  }
+  @media (min-width: 768px) {
+    .herospec {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .herospec > div {
+    background: var(--color-paper);
+    padding: 0.9rem 1rem;
+  }
+  .herospec dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+    margin-bottom: 0.3rem;
+  }
+  .herospec dd {
+    margin: 0;
+    font-weight: 600;
+    font-size: var(--text-lead);
+    letter-spacing: var(--tracking-snug);
+  }
+
+  /* ---------- SECCIONES ---------- */
+  .section {
+    padding-block: clamp(3rem, 2rem + 4vw, 5.5rem);
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  }
+  @media (min-width: 820px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1180px) {
+    .projects-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  .section__more {
+    margin-top: 2.5rem;
+  }
+
+  /* ---------- LISTA DE POSTS ---------- */
+  .postlist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--color-ink);
+  }
+  .postlist__item {
+    border-bottom: 1px solid var(--color-line);
+  }
+  .postlist__link {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 0;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  @media (min-width: 768px) {
+    .postlist__link {
+      grid-template-columns: 7rem 1fr auto;
+    }
+  }
+  .postlist__date {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    color: var(--color-ink-faint);
+    letter-spacing: var(--tracking-mono);
+    flex: none;
+  }
+  .postlist__rule {
+    height: 1px;
+    background: var(--color-ink);
+    opacity: 0.25;
+    transform: scaleX(0.4);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease-blueprint), opacity 0.4s var(--ease-blueprint);
+  }
+  .group:hover .postlist__rule {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  .postlist__title {
+    font-size: var(--text-h3);
+    font-weight: 600;
+    letter-spacing: var(--tracking-snug);
+    transition: color 0.2s var(--ease-blueprint);
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 768px) {
+    .postlist__title {
+      grid-column: auto;
+    }
+  }
+  .group:hover .postlist__title {
+    color: var(--color-signal-deep);
+  }
+  .postlist__arrow {
+    font-family: var(--font-mono);
+    color: var(--color-ink-faint);
+    transition: transform 0.2s var(--ease-blueprint), color 0.2s var(--ease-blueprint);
+    grid-row: 1;
+  }
+  .group:hover .postlist__arrow {
+    transform: translateX(4px);
+    color: var(--color-signal);
+  }
+
+  /* ---------- CTA FINAL ---------- */
+  .endcta {
+    position: relative;
+    border: 1px solid var(--color-ink);
+    background: var(--color-paper);
+    padding: clamp(2rem, 1.2rem + 3vw, 3.5rem);
+    overflow: hidden;
+  }
+  .endcta__grid {
+    position: absolute;
+    inset: 0;
+    background-image: linear-gradient(
+      to right,
+      var(--color-grid) 1px,
+      transparent 1px
+    );
+    background-size: calc(100% / 12) 100%;
+    pointer-events: none;
+  }
+  .endcta > * {
+    position: relative;
+  }
+  .endcta__title {
+    font-size: var(--text-h1);
+    margin: 0.75rem 0 1rem;
+    max-width: 16ch;
+  }
+  .endcta__text {
+    max-width: 46ch;
+    margin: 0 0 1.75rem;
+  }
+</style>
+
+<script>
+  // Resplandor reactivo al cursor en el hero (deshabilitado con reduced-motion)
+  const hero = document.querySelector<HTMLElement>("[data-hero]");
+  const glow = document.querySelector<HTMLElement>("[data-hero-glow]");
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (hero && glow && !reduce) {
+    hero.addEventListener("mousemove", (e) => {
+      const r = hero.getBoundingClientRect();
+      glow.style.setProperty("--gx", `${e.clientX - r.left}px`);
+      glow.style.setProperty("--gy", `${e.clientY - r.top}px`);
+    });
+  }
+
+  // Contador animado para la hoja de especificaciones (reduced-motion: salto directo)
+  document
+    .querySelectorAll<HTMLElement>("[data-counter]")
+    .forEach((el) => {
+      const to = Number(el.dataset.to ?? "0");
+      if (reduce || !("animate" in el)) {
+        el.textContent = `${to}+`;
+        return;
+      }
+      const obs = new IntersectionObserver(
+        (entries) => {
+          if (!entries[0].isIntersecting) return;
+          obs.disconnect();
+          const dur = 900;
+          const start = performance.now();
+          const tick = (now: number) => {
+            const t = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = `${Math.round(to * eased)}+`;
+            if (t < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        },
+        { threshold: 0.5 },
+      );
+      obs.observe(el);
+    });
+</script>

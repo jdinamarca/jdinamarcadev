@@ -1,0 +1,69 @@
+---
+interface Props {
+  /** número/sección técnica, p.ej. "§01" */
+  index?: string;
+  label?: string;
+  title: string;
+  as?: "h2" | "h3";
+  align?: "start" | "end";
+}
+const {
+  index,
+  label,
+  title,
+  as: Tag = "h2",
+  align = "start",
+} = Astro.props;
+---
+
+<div class:list={["section-heading", `align-${align}`, "reveal"]}>
+  <div class="section-heading__top">
+    {index && <span class="section-heading__index">{index}</span>}
+    {label && <span class="section-heading__label">{label}</span>}
+    <span class="draw-rule section-heading__rule" aria-hidden="true"></span>
+  </div>
+  <Tag class="section-heading__title">{title}</Tag>
+</div>
+
+<style>
+  .section-heading__top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .section-heading__index {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-signal);
+    flex: none;
+  }
+  .section-heading__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+  .section-heading__rule {
+    flex: 1;
+    height: 1px;
+    background: var(--color-ink);
+    min-width: 2rem;
+  }
+  .section-heading__title {
+    font-size: var(--text-h2);
+    max-width: 22ch;
+  }
+  .align-end {
+    text-align: end;
+  }
+  .align-end .section-heading__top {
+    justify-content: flex-end;
+  }
+  .align-end .section-heading__title {
+    margin-left: auto;
+  }
+</style>

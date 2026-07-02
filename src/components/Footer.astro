@@ -1,0 +1,125 @@
+---
+import { NAV, SITE } from "../consts";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="shell">
+    <div class="footer-grid">
+      <div class="footer-col footer-col--brand">
+        <p class="label">§ Colofón</p>
+        <p class="footer-name">
+          {SITE.title}
+          <span class="footer-name__role">— {SITE.role}</span>
+        </p>
+        <p class="footer-tagline">{SITE.tagline}</p>
+      </div>
+
+      <nav class="footer-col" aria-label="Mapa del sitio">
+        <p class="label">Índice</p>
+        <ul>
+          {NAV.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div class="footer-col">
+        <p class="label">Contacto</p>
+        <ul>
+          <li>
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+          </li>
+          {SITE.social.map((s) => (
+            <li>
+              <a href={s.href} rel="me noopener" target="_blank">
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-baseline">
+      <span>© {year} {SITE.title}. Todos los derechos reservados.</span>
+      <span class="footer-build" aria-hidden="true">
+        Construido con Astro · Tailwind · MDX
+      </span>
+      <span class="footer-coords" aria-hidden="true">
+        {SITE.coords.x} · {SITE.coords.y}
+      </span>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 6rem;
+    border-top: 1px solid var(--color-ink);
+    background: var(--color-paper);
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    padding-block: 2.5rem 2rem;
+  }
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+  .footer-col .label {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-line);
+  }
+  .footer-col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .footer-col a {
+    text-decoration: none;
+    color: var(--color-ink);
+    transition: color 0.15s var(--ease-blueprint);
+  }
+  .footer-col a:hover {
+    color: var(--color-signal-deep);
+  }
+  .footer-name {
+    font-size: var(--text-h3);
+    font-weight: 600;
+    letter-spacing: var(--tracking-tight);
+    margin: 0 0 0.5rem;
+  }
+  .footer-name__role {
+    color: var(--color-ink-soft);
+    font-weight: 400;
+  }
+  .footer-tagline {
+    color: var(--color-ink-soft);
+    max-width: 42ch;
+    margin: 0;
+  }
+  .footer-baseline {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--color-line);
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: var(--tracking-mono);
+    color: var(--color-ink-faint);
+    text-transform: uppercase;
+  }
+</style>

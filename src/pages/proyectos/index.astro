@@ -1,0 +1,56 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects")).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<BaseLayout
+  title="Portafolio"
+  description="Casos de estudio de arquitectura de software: observabilidad, sistemas distribuidos, edge y datos."
+>
+  <section class="shell section">
+    <SectionHeading
+      index="§01"
+      label="Casos de estudio"
+      title="Portafolio"
+    />
+    <p class="lead work-intro">
+      Selección de trabajo en arquitectura y sistemas. Cada proyecto documenta el
+      contexto, la decisión y el resultado —no solo el artefacto final.
+    </p>
+
+    <div class="work-grid">
+      {projects.map((p, i) => <ProjectCard project={p} index={i + 1} />)}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section {
+    padding-block: clamp(2rem, 1rem + 4vw, 4.5rem);
+  }
+  .work-intro {
+    max-width: 52ch;
+    margin: 1rem 0 2.5rem;
+  }
+  .work-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+  }
+  @media (min-width: 820px) {
+    .work-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1180px) {
+    .work-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

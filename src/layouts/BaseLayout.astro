@@ -1,0 +1,81 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import CoordReadout from "../components/CoordReadout.astro";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  /** oculta el padding superior cuando el hero va pegado al header */
+  bareTop?: boolean;
+}
+
+const { title, description, image, bareTop = false } = Astro.props;
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <BaseHead title={title} description={description} image={image} />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Saltar al contenido</a>
+    <Header />
+    <main id="main" class={bareTop ? "" : "main-pad"}>
+      <slot />
+    </main>
+    <Footer />
+    <CoordReadout />
+
+    <script>
+      // Reveal + reglas que se dibujan al entrar en viewport.
+      // Respeta prefers-reduced-motion (CSS ya las muestra estáticas).
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.classList.add("is-visible");
+            entry.target.classList.add("is-drawn");
+            io.unobserve(entry.target);
+          }
+        },
+        { rootMargin: "0px 0px -10% 0px", threshold: 0.12 },
+      );
+
+      const observe = () => {
+        document
+          .querySelectorAll(".reveal:not(.is-visible), .draw-rule:not(.is-drawn)")
+          .forEach((el) => io.observe(el));
+      };
+      observe();
+      // Re-observar tras navegación con view transitions (si se habilita)
+      document.addEventListener("astro:page-load", observe);
+    </script>
+
+    <style is:global>
+      .skip-link {
+        position: absolute;
+        left: 1rem;
+        top: -100%;
+        z-index: 100;
+        background: var(--color-ink);
+        color: var(--color-concrete);
+        font-family: var(--font-mono);
+        font-size: var(--text-meta);
+        text-transform: uppercase;
+        letter-spacing: var(--tracking-label);
+        padding: 0.6rem 0.9rem;
+        text-decoration: none;
+        transition: top 0.15s var(--ease-blueprint);
+      }
+      .skip-link:focus-visible {
+        top: 1rem;
+      }
+      .main-pad {
+        padding-top: clamp(2rem, 1rem + 4vw, 4.5rem);
+      }
+    </style>
+  </body>
+</html>

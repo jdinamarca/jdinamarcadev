@@ -1,0 +1,248 @@
+---
+import { getCollection, render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export async function getStaticPaths() {
+  const projects = await getCollection("projects");
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { data } = project;
+const { Content } = await render(project);
+
+const specs = [
+  { k: "Cliente", v: data.client },
+  { k: "Rol", v: data.role },
+  { k: "Año", v: data.year },
+  { k: "Disciplinas", v: data.disciplines.join(" · ") },
+].filter((s) => s.v);
+---
+
+<BaseLayout title={data.title} description={data.summary} image={data.cover}>
+  <article class="case">
+    <!-- Encabezado / ficha del proyecto -->
+    <header class="shell case__header">
+      <a href="/proyectos" class="case__back">← Portafolio</a>
+      <p class="label case__kicker">§ Caso de estudio</p>
+      <h1 class="case__title">{data.title}</h1>
+      <p class="lead case__summary">{data.summary}</p>
+
+      <dl class="casespec">
+        {
+          specs.map((s) => (
+            <div class="casespec__cell">
+              <dt>{s.k}</dt>
+              <dd>{s.v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+
+      <div class="case__actions">
+        {data.liveUrl && (
+          <a class="btn-signal" href={data.liveUrl} target="_blank" rel="noopener">
+            Ver en vivo <span aria-hidden="true">↗</span>
+          </a>
+        )}
+        {data.repoUrl && (
+          <a class="btn-ghost" href={data.repoUrl} target="_blank" rel="noopener">
+            Repositorio <span aria-hidden="true">↗</span>
+          </a>
+        )}
+      </div>
+
+      {
+        data.stack.length > 0 && (
+          <div class="case__stack">
+            <span class="label">Stack</span>
+            <ul>
+              {data.stack.map((s) => (
+                <li>{s}</li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <span class="draw-rule case__rule" aria-hidden="true"></span>
+    </header>
+
+    <!-- Portada -->
+    {
+      data.cover && (
+        <div class="shell case__cover-wrap">
+          <figure class="case__cover focus-corners">
+            <img
+              src={data.cover}
+              alt={data.coverAlt ?? data.title}
+              loading="eager"
+              decoding="async"
+              width="1600"
+              height="1000"
+            />
+          </figure>
+        </div>
+      )
+    }
+
+    <!-- Contenido -->
+    <div class="shell case__body">
+      <div class="prose-blueprint">
+        <Content />
+      </div>
+    </div>
+
+    <!-- Navegación pie -->
+    <div class="shell case__nav">
+      <hr class="rule" />
+      <div class="case__nav-inner">
+        <a href="/proyectos">← Todos los proyectos</a>
+        <a href="/contacto">¿Trabajamos juntos? →</a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .case__header {
+    padding-top: clamp(1rem, 0.5rem + 2vw, 2.5rem);
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-ink);
+  }
+  .case__back {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    letter-spacing: var(--tracking-mono);
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-ink-soft);
+  }
+  .case__back:hover {
+    color: var(--color-signal-deep);
+  }
+  .case__kicker {
+    margin-top: 2rem;
+    color: var(--color-signal);
+  }
+  .case__title {
+    font-size: var(--text-h1);
+    margin: 0.5rem 0 1rem;
+    max-width: 18ch;
+  }
+  .case__summary {
+    max-width: 54ch;
+    margin: 0;
+  }
+
+  .casespec {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--color-line);
+    border: 1px solid var(--color-line);
+    margin: 2rem 0 0;
+  }
+  @media (min-width: 768px) {
+    .casespec {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  .casespec__cell {
+    background: var(--color-paper);
+    padding: 0.9rem 1rem;
+  }
+  .casespec dt {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--color-ink-faint);
+    margin-bottom: 0.3rem;
+  }
+  .casespec dd {
+    margin: 0;
+    font-weight: 600;
+    font-size: var(--text-body);
+  }
+
+  .case__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+  .case__stack {
+    margin-top: 1.75rem;
+  }
+  .case__stack .label {
+    display: block;
+    margin-bottom: 0.6rem;
+  }
+  .case__stack ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+  }
+  .case__stack li {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    border: 1px solid var(--color-line);
+    padding: 0.25rem 0.5rem;
+    color: var(--color-ink-soft);
+  }
+  .case__rule {
+    display: block;
+    height: 1px;
+    background: var(--color-ink);
+    margin-top: 2rem;
+  }
+
+  .case__cover-wrap {
+    padding-block: 2rem;
+  }
+  .case__cover {
+    margin: 0;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    overflow: hidden;
+  }
+  .case__cover img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .case__body {
+    padding-top: 2.5rem;
+  }
+  .case__nav {
+    padding-top: 3rem;
+  }
+  .case__nav-inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 1.5rem;
+  }
+  .case__nav a {
+    font-family: var(--font-mono);
+    font-size: var(--text-meta);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .case__nav a:hover {
+    color: var(--color-signal-deep);
+  }
+</style>

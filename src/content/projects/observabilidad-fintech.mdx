@@ -1,0 +1,32 @@
+---
+title: "Plataforma de observabilidad distribuida para fintech"
+summary: "Diseñé la arquitectura de telemetría de extremo a extremo para procesar 2M+ eventos/s con trazas distribuidas y alertas predictivas, reduciendo el MTTR un 63%."
+client: "Confidencial · Fintech B2B"
+role: "Arquitecto de Software Líder"
+year: "2025"
+stack: ["Go", "Kafka", "ClickHouse", "OpenTelemetry", "Kubernetes"]
+disciplines: ["Arquitectura", "Observabilidad", "SRE"]
+featured: true
+order: 1
+cover: "/images/covers/cover-01.svg"
+coverAlt: "Diagrama esquemático de arquitectura de observabilidad"
+liveUrl: "https://example.com"
+---
+
+## Contexto
+
+Un sistema financiero con más de 40 microservicios operaba a ciegas: la telemetría existente era ruidosa, inconsistente y llegaba tarde. El MTTR promedio superaba las 4 horas durante incidentes críticos.
+
+## Decisión de arquitectura
+
+La premisa fue tratar la observabilidad como un producto de primera clase, no como un subproducto. Diseñé un pipeline basado en **OpenTelemetry** con tres carriles independientes —trazas, métricas y logs— cada uno con su propia estrategia de muestreo y retención.
+
+> La observabilidad barata es la que no usas cuando la necesitas. La buena observabilidad se paga sola en el primer incidente evitado.
+
+El almacenamiento columnar en **ClickHouse** permitió consultas analíticas sobre semanas de trazas sin degradar la ingesta en tiempo real.
+
+## Resultado
+
+- **-63%** en MTTR promedio.
+- Sostenibilidad demostrada de **2M eventos/s** pico.
+- Adopción del 100% de los equipos en 6 meses, gracias a SDKs propios por lenguaje.
