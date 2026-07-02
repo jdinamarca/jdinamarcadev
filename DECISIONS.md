@@ -93,12 +93,29 @@ no hay backend.
 
 ---
 
-## D-08 — `overrides.vite = "6.4.3"`
+## D-08 — `overrides.vite = "6.4.3"` (obsoleto en 0.1.1)
 
-**Decisión:** Fijar Vite a 6.4.3 en `package.json` (`overrides`).
+**Decisión (0.1.0):** Fijar Vite a 6.4.3 para resolver el mismatch de tipos.
 
 **Contexto:** `@tailwindcss/vite` admite Vite 5–8; npm resolvió Vite 8 en la raíz,
-mientras Astro usa Vite 6, provocando un error de tipos en `astro check`.
+mientras Astro 5 usaba Vite 6, provocando un error de tipos en `astro check`.
 
-**Justificación:** Una sola versión de Vite compartida deduplica los tipos y deja
-`astro check` en 0 errores sin afectar el runtime (Tailwind soporta Vite 6).
+**Revertido en 0.1.1:** al subir a Astro 7 (que requiere Vite ^8), ambos paquetes
+comparten Vite 8 y se deduplican, eliminando el conflicto. El override se quitó.
+
+---
+
+## D-09 — Actualización de seguridad a Astro 7 (0.1.1)
+
+**Decisión:** Migrar de Astro 5 a **Astro 7.0.5** (+ `@astrojs/mdx` 7) y aplicar
+`overrides.yaml ^2.8.3`.
+
+**Contexto:** `npm audit` reportó 5 vulnerabilidades (1 HIGH en `astro`: XSS en
+`define:vars`, server islands, slot names, spread props y SSRF en error pages).
+No existía parche para 5.x/6.x.
+
+**Justificación:** La única versión parcheada es 7.x. Al ser un proyecto recién
+scaffoldeado, el salto de major es de bajo riesgo y deja `audit` en 0.
+`yaml` se arregló con un override puntual (lib pura, API estable en 2.x) en
+lugar de degradar `@astrojs/check`.
+

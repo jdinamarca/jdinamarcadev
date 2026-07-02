@@ -3,6 +3,18 @@
 Registro de cambios del sitio personal (portafolio + blog) de J. Dinamarca.
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es/1.1.0/).
 
+## [0.1.1] - 2026-07-01
+
+### Seguridad
+- Resueltas 5 vulnerabilidades (máx. HIGH) detectadas por `npm audit`:
+  - **astro** (HIGH, XSS/SSRF múltiples): 5.18.2 → **7.0.5**.
+  - **@astrojs/mdx**: 4.3.14 → **7.0.1** (compatible con Astro 7).
+  - **esbuild** (transitivo, file read en dev/Windows): → 0.28.1 vía Astro 7.
+  - **yaml** (moderado, stack overflow): override `yaml ^2.8.3` → resuelto a 2.9.0.
+- **Eliminado** `overrides.vite` (ya no necesario): Astro 7 y `@tailwindcss/vite`
+  ambos requieren Vite 8, se deduplican a una sola copia sin conflicto de tipos.
+- `npm audit` → **0 vulnerabilidades**. Build verde (0 errores, 11 rutas).
+
 ## [0.1.0] - 2026-07-01
 
 ### Añadido
