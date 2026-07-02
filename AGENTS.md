@@ -131,3 +131,30 @@ raster optimizadas: cambiar el schema a `image()` y usar `<Image>` en
 - El formulario de contacto usa `mailto:` como fallback sin backend. Para un
   envío real, conectar un endpoint (p. ej. Formspree/Resend) en `contacto.astro`.
 - `og-default.png` no existe aún: añadir uno en `/public` para Open Graph.
+
+## 11. Tooling de opencode (`.opencode/`)
+
+El proyecto incluye automatizaciones de opencode. **No hay índice
+autogenerado**: los propios archivos son la fuente de verdad. Cambios en estos
+archivos requieren **reiniciar opencode** para tomar efecto.
+
+| Tipo      | Dónde                                   | Se activa                          |
+| --------- | --------------------------------------- | ---------------------------------- |
+| Comando   | `.opencode/command/<nombre>.md`         | Al escribir `/<nombre>`            |
+| Agente    | `.opencode/agent/<nombre>.md`           | Invocado por el agente principal   |
+| Skill     | `.opencode/skills/<nombre>/SKILL.md`    | Solo, según el contexto de la tarea|
+| Config    | `.opencode/opencode.json`               | Al arrancar opencode               |
+
+### Comandos disponibles
+
+- **`/audit`** (`command/audit.md`): diagnóstico de solo lectura (agente
+  `explore`). Lee esta spec + `DECISIONS.md`, escanea `src/` y devuelve un
+  backlog priorizado (P0–P3) de lo que falta construir/corregir. Úsalo para
+  descubrir gaps antes de planear trabajo.
+
+### Convención para añadir nuevos
+
+- Un archivo por comando/agente/skill, en su carpeta correspondiente.
+- Frontmatter obligatorio: `description` (y `agent`/`mode` según el tipo).
+- Al crear uno nuevo, **regístralo en esta sección** para que quede visible.
+
