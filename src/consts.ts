@@ -1,11 +1,11 @@
 export const SITE = {
-  title: "J. Dinamarca",
-  role: "Arquitecto de Software Senior",
+  title: "Jason Dinamarca",
+  role: "Ingeniería de software · IA aplicada",
   tagline:
-    "Investigación rigurosa y divulgación sobre tecnología. Diseño sistemas que sostienen, y escribo para que otros los entiendan.",
+    "Diseño sistemas sólidos y exploro cómo la IA los hace mejores. Todo contado en simple.",
   description:
-    "Portafolio y blog de J. Dinamarca, arquitecto de software senior. Investigación, arquitectura de sistemas y divulgación técnica.",
-  author: "J. Dinamarca",
+    "Portafolio y blog de Jason Dinamarca. Ingeniería de software e IA aplicada: arquitectura de sistemas, LLMs y divulgación técnica.",
+  author: "Jason Dinamarca",
   email: "hola@jdinamarca.dev",
   locale: "es",
   /** Coordenadas "ficticias" mostradas en el readout técnico */

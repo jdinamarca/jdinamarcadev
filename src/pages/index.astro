@@ -26,15 +26,15 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
       <div class="hero__meta">
         <span class="hero__index">§00</span>
         <span class="draw-rule hero__rule" aria-hidden="true"></span>
-        <span class="label">Índice · Sistema en línea</span>
+        <span class="label">Hola, soy Jason</span>
       </div>
 
       <div class="hero__headline">
         <p class="label hero__role">{SITE.role}</p>
         <h1 class="hero__title">
           <span class="hero__line">Arquitectura</span>
-          <span class="hero__line hero__line--outline">de software</span>
-          <span class="hero__line">que se sostiene.</span>
+          <span class="hero__line hero__line--outline">preparada</span>
+          <span class="hero__line">para el cambio.</span>
         </h1>
       </div>
 
@@ -51,7 +51,7 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
       <!-- Hoja de especificaciones técnica -->
       <dl class="herospec" aria-label="Especificaciones">
         <div>
-          <dt>AÑOS</dt>
+          <dt>TRAYECTORIA</dt>
           <dd data-counter data-to="12">12+</dd>
         </div>
         <div>
@@ -59,12 +59,12 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
           <dd>Sistemas distribuidos</dd>
         </div>
         <div>
-          <dt>SECTOR</dt>
-          <dd>Fintech · Data · Edge</dd>
+          <dt>EXPLORANDO</dt>
+          <dd>LLMs · GenAI · Edge</dd>
         </div>
         <div>
-          <dt>BASE</dt>
-          <dd>{SITE.coords.x}</dd>
+          <dt>DESDE</dt>
+          <dd>Santiago, CL</dd>
         </div>
       </dl>
     </div>
@@ -94,8 +94,8 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
               <span class="postlist__date">
                 <FormattedDate date={post.data.pubDate} format="short" />
               </span>
-              <span class="draw-rule postlist__rule" aria-hidden="true" />
               <span class="postlist__title">{post.data.title}</span>
+              <span class="postlist__rule" aria-hidden="true"></span>
               <span class="postlist__arrow" aria-hidden="true">→</span>
             </a>
           </li>
@@ -115,14 +115,14 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
       <div class="endcta__grid" aria-hidden="true"></div>
       <p class="label endcta__label">§ Contacto</p>
       <h2 class="endcta__title">
-        ¿Tienes un sistema que necesita <span class="underline-signal">claridad</span>?
+        ¿Y si me cuentas qué estás <span class="underline-signal">construyendo</span>?
       </h2>
       <p class="lead endcta__text">
-        Trabajo en arquitectura, observabilidad y decisiones técnicas que duran.
-        Cuéntame qué estás construyendo.
+        Arquitectura, observabilidad, IA aplicada… lo que sea que te quite el sueño.
+        Escríbeme y conversamos sin compromiso.
       </p>
       <a class="btn-signal" href="/contacto">
-        Iniciar conversación <span aria-hidden="true">→</span>
+        Cuéntame tu idea <span aria-hidden="true">→</span>
       </a>
     </div>
   </section>
@@ -293,62 +293,80 @@ const posts = (await getCollection("blog", ({ data }) => !data.draft))
     border-bottom: 1px solid var(--color-line);
   }
   .postlist__link {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.1rem 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 1.25rem;
+    padding: 1.25rem 0;
     text-decoration: none;
     color: var(--color-ink);
   }
-  @media (min-width: 768px) {
-    .postlist__link {
-      grid-template-columns: 7rem 1fr auto;
-    }
-  }
   .postlist__date {
+    flex: 1 0 100%;
     font-family: var(--font-mono);
     font-size: var(--text-meta);
     color: var(--color-ink-faint);
     letter-spacing: var(--tracking-mono);
-    flex: none;
-  }
-  .postlist__rule {
-    height: 1px;
-    background: var(--color-ink);
-    opacity: 0.25;
-    transform: scaleX(0.4);
-    transform-origin: left;
-    transition: transform 0.4s var(--ease-blueprint), opacity 0.4s var(--ease-blueprint);
-  }
-  .group:hover .postlist__rule {
-    transform: scaleX(1);
-    opacity: 1;
   }
   .postlist__title {
+    flex: 0 1 auto;
     font-size: var(--text-h3);
     font-weight: 600;
     letter-spacing: var(--tracking-snug);
     transition: color 0.2s var(--ease-blueprint);
-    grid-column: 1 / -1;
-  }
-  @media (min-width: 768px) {
-    .postlist__title {
-      grid-column: auto;
-    }
   }
   .group:hover .postlist__title {
     color: var(--color-signal-deep);
   }
+  .postlist__rule {
+    display: none;
+  }
   .postlist__arrow {
+    margin-left: auto;
     font-family: var(--font-mono);
     color: var(--color-ink-faint);
     transition: transform 0.2s var(--ease-blueprint), color 0.2s var(--ease-blueprint);
-    grid-row: 1;
   }
   .group:hover .postlist__arrow {
     transform: translateX(4px);
     color: var(--color-signal);
+  }
+  @media (min-width: 768px) {
+    .postlist__link {
+      flex-wrap: nowrap;
+      align-items: baseline;
+      gap: 1.25rem;
+    }
+    .postlist__date {
+      flex: 0 0 auto;
+      width: 5.5rem;
+    }
+    .postlist__title {
+      flex: 0 1 auto;
+      max-width: 46ch;
+    }
+    /* Regla conectora: llena el hueco entre título y flecha, se "dibuja" en hover */
+    .postlist__rule {
+      display: block;
+      flex: 1 1 auto;
+      height: 1px;
+      align-self: center;
+      min-width: 1.5rem;
+      background: var(--color-ink);
+      opacity: 0.16;
+      transform: scaleX(0.35);
+      transform-origin: left;
+      transition: transform 0.45s var(--ease-blueprint),
+        opacity 0.45s var(--ease-blueprint);
+    }
+    .group:hover .postlist__rule {
+      transform: scaleX(1);
+      opacity: 0.55;
+    }
+    .postlist__arrow {
+      margin-left: 0;
+      flex: 0 0 auto;
+    }
   }
 
   /* ---------- CTA FINAL ---------- */
