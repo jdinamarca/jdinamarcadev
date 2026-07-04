@@ -6,7 +6,7 @@ romper convenciones. Léela antes de editar.
 ## 1. Qué es esto
 
 Sitio personal **portafolio + blog** de J. Dinamarca (arquitecto de software senior).
-Stack: **Astro 5 + Tailwind v4 (via `@tailwindcss/vite`) + MDX + Fontsource**.
+Stack: **Astro 7 + Tailwind v4 (via `@tailwindcss/vite`) + MDX + Fontsource**.
 Contenido en MDX dentro de `src/content/` (sin CMS). Deploy estático pensado para
 Vercel/Netlify.
 
@@ -25,12 +25,14 @@ Vercel/Netlify.
 npm run dev      # servidor de desarrollo (http://localhost:4321)
 npm run build    # astro check (tipos) + astro build  -> dist/
 npm run preview  # sirve el build
+npm run gen-og   # regenera public/og-default.png desde el SVG fuente
 npm run astro    # acceso directo al CLI de Astro
 ```
 
 - `build` corre `astro check`: debe quedar en **0 errores**.
-- Para añadir dependencias, preferir mantener el `overrides.vite = "6.4.3"` para
-  evitar el mismatch de tipos entre Astro y `@tailwindcss/vite`.
+- Para añadir dependencias, mantener `overrides.yaml = "^2.8.3"` para evitar el
+  mismatch de `yaml` que arrastra Astro 7 (ver D-08/D-09). **No fijar Vite**: el
+  override legacy `overrides.vite` quedó obsoleto tras la migración Astro 5→7.
 
 ## 4. Estructura
 
@@ -130,7 +132,8 @@ raster optimizadas: cambiar el schema a `image()` y usar `<Image>` en
 - Build verde: `astro check` 0 errores; 11 rutas generadas.
 - El formulario de contacto usa `mailto:` como fallback sin backend. Para un
   envío real, conectar un endpoint (p. ej. Formspree/Resend) en `contacto.astro`.
-- `og-default.png` no existe aún: añadir uno en `/public` para Open Graph.
+- `og-default.png` se genera desde `public/og-default.svg` con `npm run gen-og`
+  (usa `sharp`); regenerarlo tras cambiar el SVG.
 
 ## 11. Tooling de opencode (`.opencode/`)
 

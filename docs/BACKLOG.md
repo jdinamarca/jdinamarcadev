@@ -14,10 +14,7 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ## 📋 Por hacer
 
 ### P1 — Alta prioridad
-- [ ] **[Docs] Deriva entre `AGENTS.md` y el stack real.** §2/§3 dicen "Astro 5" y
-      "mantener `overrides.vite = "6.4.3"`", pero el proyecto ya es **Astro 7.0.5** con
-      `overrides.yaml ^2.8.3` (ver D-08/D-09 y CHANGELOG 0.1.1). Actualizar §2, §3 y §10
-      para que ningún agente vuelva a fijar Vite.
+- (nada pendiente)
 
 ### P2 — Media
 - [ ] **[Feature] Backend del formulario de contacto.** Hoy es fallback `mailto:`
@@ -63,6 +60,9 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ---
 
 ## ✅ Completado (verificado en esta auditoría)
+- [x] **[Docs] `AGENTS.md` sincronizado con el stack real.** §1 Astro 5→7; §3 nota de
+      override `overrides.yaml ^2.8.3` (no fijar Vite) + `npm run gen-og`; §10 describe
+      la generación del OG.
 - [x] **[SEO/Social] `og-default.png` creado.** SVG fuente (`public/og-default.svg`) +
       raster 1200×630 generado vía `sharp` (`scripts/gen-og.mjs`, `npm run gen-og`).
       Estética blueprint: grilla, marco, esquineros de foco `signal` y tipografía
