@@ -17,8 +17,6 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 - (nada pendiente)
 
 ### P2 — Media
-- [ ] **[Feature] Backend del formulario de contacto.** Hoy es fallback `mailto:`
-      (D-07). Conectar un endpoint real (Formspree/Resend) en `contacto.astro`.
 - [ ] **[Perf/a11y] Migrar portadas SVG placeholder → `astro:assets <Image>`.** Hoy son
       SVG por path (D-06); se pierde optimización y `alt` estructurado. Cambiar el schema
       a `image()` en `content.config.ts` y usar `<Image>` en `ProjectCard` y
@@ -39,6 +37,11 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
       `matchMedia`.
 - [ ] **[Contenido] `readingTime` puede inflarse** porque cuenta markup/código de MDX
       (`post.body.split(/\s+/)`). Considerar texto plano para el conteo.
+- [ ] **[UX] Animar el formulario de contacto (micro-interacciones blueprint).** Hoy los
+      inputs y el botón son estáticos. Añadir vida sin romper el brutalismo: label que
+      "flota"/sube al enfocar, línea de `signal` que se dibuja bajo el campo activo,
+      estado de envío con pulso/scan, y confirmación de éxito animada (check que se
+      "dibuja"). Todo tras `prefers-reduced-motion` (mostrar estado final estático).
 
 ---
 
@@ -56,10 +59,16 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ## 🎨 UX/UI
 - [ ] Tagbar de `/blog` no funcional (ver P3).
 - [ ] Revisar contraste del `border-color` de foco de inputs una vez restaurado el outline.
+- [ ] Animar el formulario de contacto (ver P3): micro-interacciones blueprint.
 
 ---
 
 ## ✅ Completado (verificado en esta auditoría)
+- [x] **[Feature] Backend del formulario de contacto (Resend).** Serverless function
+      `api/contact.ts` (SDK `resend`, `reply_to` al visitante, honeypot, validación)
+      registrada en Vercel vía `vercel.json`; `contacto.astro` envía por `fetch` con
+      fallback `mailto:` en errores 5xx/red. Env var `RESEND_API_KEY` (Vercel) +
+      dominio verificado en Resend. Resuelve D-07.
 - [x] **[Docs] `AGENTS.md` sincronizado con el stack real.** §1 Astro 5→7; §3 nota de
       override `overrides.yaml ^2.8.3` (no fijar Vite) + `npm run gen-og`; §10 describe
       la generación del OG.
