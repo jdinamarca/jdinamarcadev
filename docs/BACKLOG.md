@@ -21,9 +21,9 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
       SVG por path (D-06); se pierde optimización y `alt` estructurado. Cambiar el schema
       a `image()` en `content.config.ts` y usar `<Image>` en `ProjectCard` y
       `proyectos/[slug].astro`.
-- [ ] **[Deploy] Confirmar identidad y dominio reales.** `site: https://jdinamarca.dev`,
-      `email: hola@jdinamarca.dev` y datos de autor parecen placeholders. Verificar antes
-      de deployar: RSS, canonical y sitemap dependen de `site`.
+      — **Aplazada (2026-07-04):** las portadas son SVG placeholder; `<Image>` no optimiza
+      SVG, así que el beneficio real llega al disponer de imágenes raster. Reevaluar cuando
+      existan portadas finales. Toca también el `og:image` en `[slug].astro`.
 
 ### P3 — Baja / deuda técnica
 - [ ] **[UX] Tagbar de `/blog` no filtra.** Las etiquetas son `<span>` decorativas
@@ -64,6 +64,9 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ---
 
 ## ✅ Completado (verificado en esta auditoría)
+- [x] **[Deploy] Identidad y dominio confirmados.** Deploy real en `https://jdinamarca.dev`
+      (Vercel, 2026-07-04): `site`, `email` (`hola@jdinamarca.dev`) y `author` verificados.
+      Coordenadas del readout ajustadas a Plaza Italia, Santiago (`33.438 S / 70.634 W`).
 - [x] **[Feature] Backend del formulario de contacto (Resend).** Serverless function
       `api/contact.ts` (SDK `resend`, `reply_to` al visitante, honeypot, validación)
       registrada en Vercel vía `vercel.json`; `contacto.astro` envía por `fetch` con

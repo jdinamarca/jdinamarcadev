@@ -8,8 +8,8 @@ export const SITE = {
   author: "Jason Dinamarca",
   email: "hola@jdinamarca.dev",
   locale: "es",
-  /** Coordenadas "ficticias" mostradas en el readout técnico */
-  coords: { x: "33.453 S", y: "70.663 W" },
+  /** Coordenadas referenciales (Plaza Italia, Santiago) para el readout técnico */
+  coords: { x: "33.438 S", y: "70.634 W" },
   social: [
     { label: "GitHub", href: "https://github.com/jdinamarca" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/jdinamarca" },
