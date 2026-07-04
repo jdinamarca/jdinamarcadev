@@ -8,6 +8,7 @@
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
+    "gen-og": "node scripts/gen-og.mjs",
     "astro": "astro"
   },
   "dependencies": {
@@ -21,6 +22,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@tailwindcss/vite": "^4.1.16",
+    "sharp": "^0.33.5",
     "tailwindcss": "^4.1.16",
     "typescript": "^5.9.2"
   },

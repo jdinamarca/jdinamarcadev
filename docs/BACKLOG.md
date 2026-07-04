@@ -14,10 +14,6 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ## 📋 Por hacer
 
 ### P1 — Alta prioridad
-- [ ] **[SEO/Social] `og-default.png` inexistente.** `BaseHead.astro` referencia
-      `/og-default.png` pero no está en `/public`. Los shares Open Graph/Twitter caen sin
-      imagen. Añadir asset 1200×630 con la estética blueprint (ya anotado en AGENTS.md §10
-      y CHANGELOG "Por hacer").
 - [ ] **[Docs] Deriva entre `AGENTS.md` y el stack real.** §2/§3 dicen "Astro 5" y
       "mantener `overrides.vite = "6.4.3"`", pero el proyecto ya es **Astro 7.0.5** con
       `overrides.yaml ^2.8.3` (ver D-08/D-09 y CHANGELOG 0.1.1). Actualizar §2, §3 y §10
@@ -67,6 +63,10 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ---
 
 ## ✅ Completado (verificado en esta auditoría)
+- [x] **[SEO/Social] `og-default.png` creado.** SVG fuente (`public/og-default.svg`) +
+      raster 1200×630 generado vía `sharp` (`scripts/gen-og.mjs`, `npm run gen-og`).
+      Estética blueprint: grilla, marco, esquineros de foco `signal` y tipografía
+      Geist/JetBrains Mono. `BaseHead.astro` ya lo referenciaba.
 - [x] **[Bug a11y] Outline de foco restaurado en inputs de contacto.** Cambiado
       `:focus` → `:focus-visible` y eliminado `outline: none` en `contacto.astro`,
       para que vuelva a aplicar el outline `signal` global (AGENTS.md §7).
