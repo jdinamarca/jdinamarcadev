@@ -63,6 +63,9 @@ import { SITE } from "../consts";
           <button class="btn-signal" type="submit">
             Enviar mensaje <span aria-hidden="true">→</span>
           </button>
+          <span class="form-ok" data-form-ok aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 12.5 L9.5 18 L20 6.5" /></svg>
+          </span>
           <p class="form-status" data-form-status aria-live="polite"></p>
         </div>
         <noscript>
@@ -133,6 +136,7 @@ import { SITE } from "../consts";
     border-bottom: 1px solid var(--color-line);
   }
   .field {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
@@ -144,6 +148,26 @@ import { SITE } from "../consts";
     text-transform: uppercase;
     letter-spacing: var(--tracking-label);
     color: var(--color-ink-soft);
+    transition: color 0.2s var(--ease-blueprint);
+  }
+  .field::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: var(--color-signal);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.3s var(--ease-blueprint);
+    pointer-events: none;
+  }
+  .field:focus-within::after {
+    transform: scaleX(1);
+  }
+  .field:focus-within label {
+    color: var(--color-signal-deep);
   }
   .field input,
   .field textarea {
@@ -184,6 +208,84 @@ import { SITE } from "../consts";
   }
   .form-status[data-state="error"] {
     color: var(--color-ink);
+  }
+
+  .btn-signal {
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-form.is-sending .btn-signal::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    transform: translateX(-100%);
+    animation: btn-scan 1s var(--ease-blueprint) infinite;
+    pointer-events: none;
+  }
+  @keyframes btn-scan {
+    to {
+      transform: translateX(100%);
+    }
+  }
+
+  .form-ok {
+    display: inline-grid;
+    place-items: center;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      width 0.25s var(--ease-blueprint),
+      opacity 0.25s var(--ease-blueprint);
+  }
+  .contact-form.is-success .form-ok {
+    width: 1.5rem;
+    opacity: 1;
+  }
+  .form-ok svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+  .form-ok path {
+    fill: none;
+    stroke: var(--color-signal);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+  }
+  .contact-form.is-success .form-ok path {
+    animation: draw-check 0.45s var(--ease-blueprint) forwards;
+  }
+  @keyframes draw-check {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .field::after,
+    .field label,
+    .form-ok {
+      transition: none;
+    }
+    .field:focus-within::after {
+      transform: scaleX(1);
+    }
+    .contact-form.is-sending .btn-signal::after {
+      display: none;
+    }
+    .contact-form.is-success .form-ok path {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
   }
   .form-noscript {
     margin-top: 1rem;
@@ -234,6 +336,8 @@ import { SITE } from "../consts";
     };
 
     setStatus("Enviando…", null);
+    form.classList.add("is-sending");
+    form.classList.remove("is-success");
     const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]");
     if (submitBtn) submitBtn.disabled = true;
 
@@ -251,15 +355,20 @@ import { SITE } from "../consts";
 
       if (res.ok && json.ok) {
         setStatus("Mensaje enviado. Gracias.", true);
+        form.classList.remove("is-sending");
+        form.classList.add("is-success");
         form.reset();
       } else if (res.status >= 500) {
+        form.classList.remove("is-sending", "is-success");
         setStatus("Servicio no disponible. Abriendo tu cliente de correo…", false);
         mailtoFallback();
       } else {
+        form.classList.remove("is-sending", "is-success");
         const fieldErr = json.fields ? Object.values(json.fields)[0] : null;
         setStatus(fieldErr ?? json.error ?? "Revisa los campos.", false);
       }
     } catch {
+      form.classList.remove("is-sending", "is-success");
       setStatus("Sin conexión. Abriendo tu cliente de correo…", false);
       if (!reduce) mailtoFallback();
       else setStatus("Sin conexión. Reintenta más tarde.", false);

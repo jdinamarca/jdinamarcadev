@@ -37,11 +37,11 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
       `matchMedia`.
 - [ ] **[Contenido] `readingTime` puede inflarse** porque cuenta markup/código de MDX
       (`post.body.split(/\s+/)`). Considerar texto plano para el conteo.
-- [ ] **[UX] Animar el formulario de contacto (micro-interacciones blueprint).** Hoy los
-      inputs y el botón son estáticos. Añadir vida sin romper el brutalismo: label que
-      "flota"/sube al enfocar, línea de `signal` que se dibuja bajo el campo activo,
-      estado de envío con pulso/scan, y confirmación de éxito animada (check que se
-      "dibuja"). Todo tras `prefers-reduced-motion` (mostrar estado final estático).
+- [ ] **[Workflow] Facilitar la creación de publicaciones del blog.** Hoy los posts se
+      crean copiando un `.mdx` existente a mano. Definir el flujo: (a) **scaffold CLI**
+      `npm run new-post` que genere el archivo con frontmatter base (`title`, `description`,
+      `pubDate`, `tags`, `draft`) a partir de un título, o (b) **CMS/panel** (Decap/Tina/
+      admin). Confirmar alcance antes de implementar.
 
 ---
 
@@ -59,11 +59,14 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ## 🎨 UX/UI
 - [ ] Tagbar de `/blog` no funcional (ver P3).
 - [ ] Revisar contraste del `border-color` de foco de inputs una vez restaurado el outline.
-- [ ] Animar el formulario de contacto (ver P3): micro-interacciones blueprint.
 
 ---
 
 ## ✅ Completado (verificado en esta auditoría)
+- [x] **[UX] Animar el formulario de contacto (micro-interacciones blueprint).** Línea
+      `signal` que se dibuja bajo el campo activo, label que pasa a `signal-deep`, scan del
+      botón durante el envío y check animado al éxito. Todo con fallback estático tras
+      `prefers-reduced-motion` (AGENTS.md §7).
 - [x] **[Deploy] Identidad y dominio confirmados.** Deploy real en `https://jdinamarca.dev`
       (Vercel, 2026-07-04): `site`, `email` (`hola@jdinamarca.dev`) y `author` verificados.
       Coordenadas del readout ajustadas a Plaza Italia, Santiago (`33.438 S / 70.634 W`).
