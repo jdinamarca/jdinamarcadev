@@ -58,6 +58,7 @@ import { SITE } from "../consts";
           <label for="message">Mensaje</label>
           <textarea id="message" name="message" rows="5" required></textarea>
         </div>
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="gotcha" />
         <div class="form-actions">
           <button class="btn-signal" type="submit">
             Enviar mensaje <span aria-hidden="true">→</span>
@@ -158,6 +159,13 @@ import { SITE } from "../consts";
   .field textarea:focus-visible {
     border-color: var(--color-ink);
   }
+  .gotcha {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
   .form-actions {
     display: flex;
     align-items: center;
@@ -171,6 +179,12 @@ import { SITE } from "../consts";
     color: var(--color-ink-soft);
     margin: 0;
   }
+  .form-status[data-state="ok"] {
+    color: var(--color-signal-deep);
+  }
+  .form-status[data-state="error"] {
+    color: var(--color-ink);
+  }
   .form-noscript {
     margin-top: 1rem;
     font-size: var(--text-meta);
@@ -179,11 +193,18 @@ import { SITE } from "../consts";
 </style>
 
 <script>
-  // Fallback accesible: si no hay backend, abre el cliente de correo.
   const form = document.querySelector<HTMLFormElement>("[data-contact-form]");
   const status = document.querySelector<HTMLElement>("[data-form-status]");
-  form?.addEventListener("submit", (e) => {
-    e.preventDefault();
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function setStatus(text: string, ok: boolean | null = null) {
+    if (!status) return;
+    status.textContent = text;
+    status.dataset.state = ok === null ? "loading" : ok ? "ok" : "error";
+  }
+
+  function mailtoFallback() {
+    if (!form) return;
     const data = new FormData(form);
     const name = String(data.get("name") ?? "");
     const email = String(data.get("email") ?? "");
@@ -194,6 +215,56 @@ import { SITE } from "../consts";
     window.location.href = `mailto:${to}?subject=${encodeURIComponent(
       subject,
     )}&body=${encodeURIComponent(body)}`;
-    if (status) status.textContent = "Abriendo tu cliente de correo…";
+  }
+
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const data = new FormData(form);
+    const payload = {
+      name: String(data.get("name") ?? ""),
+      email: String(data.get("email") ?? ""),
+      subject: String(data.get("subject") ?? ""),
+      message: String(data.get("message") ?? ""),
+      _gotcha: String(data.get("_gotcha") ?? ""),
+    };
+
+    setStatus("Enviando…", null);
+    const submitBtn = form.querySelector<HTMLButtonElement>("button[type=submit]");
+    if (submitBtn) submitBtn.disabled = true;
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const json = (await res.json().catch(() => ({}))) as {
+        ok?: boolean;
+        error?: string;
+        fields?: Record<string, string>;
+      };
+
+      if (res.ok && json.ok) {
+        setStatus("Mensaje enviado. Gracias.", true);
+        form.reset();
+      } else if (res.status >= 500) {
+        setStatus("Servicio no disponible. Abriendo tu cliente de correo…", false);
+        mailtoFallback();
+      } else {
+        const fieldErr = json.fields ? Object.values(json.fields)[0] : null;
+        setStatus(fieldErr ?? json.error ?? "Revisa los campos.", false);
+      }
+    } catch {
+      setStatus("Sin conexión. Abriendo tu cliente de correo…", false);
+      if (!reduce) mailtoFallback();
+      else setStatus("Sin conexión. Reintenta más tarde.", false);
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+    }
   });
 </script>
