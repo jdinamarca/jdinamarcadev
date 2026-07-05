@@ -1,0 +1,36 @@
+---
+title: "Broker de acceso RDS securitizado con .rdp firmados y efímeros"
+summary: "Reemplacé AVD por RDS sin degradar la postura de seguridad: launcher con login LDAP + OTP, autorización por grupos de AD y .rdp firmados con CA local y eliminados a los 3 s. Ahorro de USD 37 K/mes cumpliendo estándares."
+client: "Confidencial · Corporate"
+role: "Arquitecto de Software Líder"
+year: "2026"
+stack: ["RDS", "Active Directory / LDAP", "ADCS (PKI)", "OTP / 2FA", "ASP.NET", ".NET", "PostgreSQL"]
+disciplines: ["Arquitectura", "Seguridad", "Identidad (IAM)", "Escritorios virtuales"]
+featured: true
+order: 1
+cover: "/images/covers/cover-04.svg"
+coverAlt: "Diagrama esquemático del broker de acceso RDS"
+---
+
+## Contexto
+
+La organización migraba sus escritorios virtuales desde Azure Virtual Desktop (AVD) hacia RDS propio para reducir costos. El escollo era de seguridad: RDS distribuye archivos `.rdp` que pueden copiarse, reenviarse o reutilizarse, y su modelo nativo carece de doble factor y de control granular por aplicación. Migrar sin más habría abierto vectores de movimiento lateral y violado los estándares de seguridad exigidos.
+
+## Decisión de arquitectura
+
+Construí un **broker de securitización** entre el usuario y RDS, en tres capas:
+
+- **Launcher en cada PC cliente**: autentica contra el LDAP corporativo y exige un código OTP como segundo factor antes de mostrar cualquier recurso. Solo tras el 2FA se exhiben las aplicaciones autorizadas.
+- **Backend + base de datos de mapeo**: asocia cada aplicación publicada a grupos de AD y a sus SIDs. En el login se resuelven los grupos del usuario y, a partir de ellos, las aplicaciones a las que tiene acceso — mínimo privilegio por construcción.
+- **Generación de `.rdp` bajo demanda**: cada archivo se firma con el *thumbprint* de un certificado de la CA local instalada en el backend (integridad y validación criptográfica) y se elimina a los 3 segundos de su uso.
+
+> La seguridad de un `.rdp` no reside en dónde lo guardas, sino en cuánto vive y en quién lo firma.
+
+La firma garantiza que el archivo no haya sido manipulado y provenga del backend de confianza; la vida útil de 3 segundos reduce al mínimo la ventana de copia o exfiltración.
+
+## Resultado
+
+- **−USD 37.000 / mes** frente al costo de AVD.
+- **2FA (OTP) + LDAP** cumpliendo los estándares de seguridad corporativos.
+- Acceso granular por aplicación, derivado de los grupos de AD.
+- `.rdp` firmados (anti-*tampering*) y efímeros (3 s), minimizando copia y reenvío.
