@@ -17,7 +17,7 @@ export default function handler(req: VercelRequest, res: VercelResponse): void {
   }
 
   const proto = req.headers?.["x-forwarded-proto"] ?? "https";
-  const host = req.headers?.host ?? "jdinamarca.dev";
+  const host = req.headers?.host ?? "www.jdinamarca.dev";
   const origin = `${proto}://${host}`;
   const redirectUri = `${origin}/api/callback`;
   const state = crypto.randomUUID();
