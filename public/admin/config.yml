@@ -7,10 +7,10 @@ backend:
   name: github
   repo: jdinamarca/jdinamarcadev
   branch: main
-  base_url: https://jdinamarca.dev
+  base_url: https://www.jdinamarca.dev
   auth_endpoint: /api/auth
 
-site_url: https://jdinamarca.dev
+site_url: https://www.jdinamarca.dev
 display_url: https://github.com/jdinamarca/jdinamarcadev
 
 media_folder: "public/images/blog"
