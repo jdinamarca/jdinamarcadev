@@ -1,11 +1,11 @@
 ---
 title: "Broker de acceso RDS securitizado con .rdp firmados y efímeros"
-summary: "Reemplacé AVD por RDS sin degradar la postura de seguridad: launcher con login LDAP + OTP, autorización por grupos de AD y .rdp firmados con CA local y eliminados a los 3 s. Ahorro de USD 37 K/mes cumpliendo estándares."
+summary: "Diseñé la capa de securitización de accesos RDS — launcher con login LDAP + OTP, autorización por grupos de AD y .rdp firmados con CA local y eliminados a los 3 s — que habilitó la migración desde AVD cumpliendo estándares (ahorro de USD 37 K/mes)."
 client: "Confidencial · Corporate"
 role: "Arquitecto de Software Líder"
 year: "2026"
 stack: ["RDS", "Active Directory / LDAP", "ADCS (PKI)", "OTP / 2FA", "ASP.NET", ".NET", "PostgreSQL"]
-disciplines: ["Arquitectura", "Seguridad", "Identidad (IAM)", "Escritorios virtuales"]
+disciplines: ["Arquitectura", "Seguridad", "Identidad (IAM)", "PKI"]
 featured: true
 order: 1
 cover: "/images/covers/cover-04.svg"
@@ -14,7 +14,7 @@ coverAlt: "Diagrama esquemático del broker de acceso RDS"
 
 ## Contexto
 
-La organización migraba sus escritorios virtuales desde Azure Virtual Desktop (AVD) hacia RDS propio para reducir costos. El escollo era de seguridad: RDS distribuye archivos `.rdp` que pueden copiarse, reenviarse o reutilizarse, y su modelo nativo carece de doble factor y de control granular por aplicación. Migrar sin más habría abierto vectores de movimiento lateral y violado los estándares de seguridad exigidos.
+La organización había decidido migrar sus escritorios virtuales desde Azure Virtual Desktop (AVD) a RDS propio para reducir costos; la infraestructura RDS fue desplegada y configurada por el equipo de plataforma. Mi alcance fue la **securitización del acceso**: el modelo nativo de RDS distribuye archivos `.rdp` que pueden copiarse, reenviarse o reutilizarse, y carece de doble factor y de control granular por aplicación. Sin una capa adicional, la migración habría abierto vectores de movimiento lateral y violado los estándares de seguridad exigidos.
 
 ## Decisión de arquitectura
 
@@ -30,7 +30,7 @@ La firma garantiza que el archivo no haya sido manipulado y provenga del backend
 
 ## Resultado
 
-- **−USD 37.000 / mes** frente al costo de AVD.
+- **USD 37.000 / mes** de ahorro liberado al viabilizar la migración AVD → RDS sin concesiones de seguridad.
 - **2FA (OTP) + LDAP** cumpliendo los estándares de seguridad corporativos.
 - Acceso granular por aplicación, derivado de los grupos de AD.
 - `.rdp` firmados (anti-*tampering*) y efímeros (3 s), minimizando copia y reenvío.
