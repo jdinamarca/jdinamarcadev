@@ -1,0 +1,44 @@
+---
+title: "Tigo Virtual Access: acceso RDS securitizado en 7 capas"
+summary: "Diseñé Tigo Virtual Access, la capa de securitización de accesos RDS: siete capas independientes (MFA LDAP+TOTP, JWT, RBAC por SID, firma RSA-SHA256 del .rdp, sesión efímera one-shot, auditoría inmutable y hardening de BD) bajo el principio de que ninguna capa confía en la anterior. Habilitó la migración AVD→RDS (USD 37 K/mes) cumpliendo NIST AAL2 e ISO 27001."
+client: "Confidencial · Corporate"
+role: "Arquitecto de Software Líder"
+year: "2026"
+stack: ["RDS", "ASP.NET", ".NET", "PostgreSQL", "LDAP / AD", "privacyIDEA (TOTP)", "AD CS (PKI)"]
+disciplines: ["Arquitectura", "Seguridad", "Identidad (IAM)", "Defensa en profundidad"]
+featured: true
+order: 1
+cover: "/images/covers/cover-04.svg"
+coverAlt: "Diagrama esquemático de las capas de seguridad del broker RDS"
+---
+
+## Contexto
+
+La organización migraba sus escritorios virtuales desde Azure Virtual Desktop (AVD) a RDS propio, con la infraestructura desplegada por el equipo de plataforma. El modelo nativo de RDS entrega a los usuarios archivos `.rdp` protegidos solo por credenciales: copiables, reenviables y reutilizables, sin doble factor ni control granular por aplicación. Mi alcance fue diseñar **Tigo Virtual Access**, la capa de securitización del acceso, para que la migración cumpliera los estándares internos (NIST SP 800-63B, ISO 27001, OWASP).
+
+El principio rector fue **defensa en profundidad**: siete capas independientes, ninguna confiando en la anterior.
+
+## Decisión de arquitectura
+
+**1. Identidad (MFA).** Dos factores validados en el servidor: contraseña de Active Directory (bind LDAP) + código TOTP (privacyIDEA). El login devuelve siempre `"Credenciales inválidas"` ante cualquier fallo —usuario, contraseña u OTP— para eliminar el *oracle* de credenciales: un atacante no puede distinguir qué factor falló.
+
+**2. Sesión.** JWT firmado con HS256, TTL de 8 h, secreto que nunca sale del servidor.
+
+**3. Autorización (RBAC).** En cada solicitud, el backend verifica la pertenencia del usuario a los grupos AD de la aplicación —evaluada por **SID**, resistente a renombrados de grupos— y aplica una política **fail-secure**: sin grupo autorizado, se deniega (403) y se audita.
+
+**4. Firma del `.rdp`.** Cada archivo se firma con RSA-SHA256 usando un certificado de la CA corporativa (AD CS) instalado en el servidor; `mstsc` rechaza cualquier `.rdp` alterado. La clave privada nunca abandona el almacén de Windows.
+
+**5. Sesión efímera.** Token de un solo uso (32 bytes criptográficos), almacenado solo como **hash SHA256**, con TTL de 5 min y consumo atómico al abrir la sesión: un reintento devuelve 409 (anti-replay).
+
+**6. `.rdp` efímero en disco.** El launcher borra el archivo de `%TEMP%` **3 segundos después** de abrir `mstsc` (que lo lee al arrancar), con un segundo intento en un bloque `finally` al cerrar —ventana mínima de exposición y nada persiste en disco.
+
+**7. Auditoría inmutable + hardening.** Todos los eventos de seguridad caen en una tabla **append-only** protegida por un *trigger* de PostgreSQL que rechaza `UPDATE`/`DELETE` incluso al rol de aplicación; roles de BD de mínimo privilegio y consultas parametrizadas (Dapper).
+
+> Ninguna capa confía en la anterior: si una falla o se omite, las demás siguen conteniendo al atacante.
+
+## Resultado
+
+- Habilitó la migración AVD → RDS, liberando **USD 37.000 / mes**.
+- Cumplimiento **NIST SP 800-63B (AAL2)**, **ISO 27001** (A.9.4, A.12.4) y **OWASP** (A02, A03).
+- Trazabilidad completa: cada `.rdp` entregado queda registrado con su hash SHA256, vinculado al token de sesión y al SID del usuario.
+- Defensa en profundidad real: siete capas independientes —comprometer una no compromete el sistema.
