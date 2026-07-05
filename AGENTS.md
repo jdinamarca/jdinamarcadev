@@ -3,6 +3,15 @@
 Guía para que cualquier agente (humano o IA) trabaje en este proyecto sin
 romper convenciones. Léela antes de editar.
 
+## 0. Estado actual (leer primero)
+
+Antes de cualquier tarea, lee **`docs/SESION.md`**: es la fuente de verdad de
+en qué quedó la última sesión (qué se hizo, qué está a medias, qué sigue y las
+decisiones clave). `docs/BACKLOG.md` es el backlog priorizado de más largo
+alcance; `DECISIONS.md`, el historial de decisiones arquitectónicas. Si
+`docs/SESION.md` no existe o está claramente desactualizado, no lo inventes:
+dilo y propón actualizarlo (puedes usar `/fin` al cerrar la tarea).
+
 ## 1. Qué es esto
 
 Sitio personal **portafolio + blog** de J. Dinamarca (arquitecto de software senior).
@@ -154,6 +163,9 @@ archivos requieren **reiniciar opencode** para tomar efecto.
   `explore`). Lee esta spec + `DECISIONS.md`, escanea `src/` y devuelve un
   backlog priorizado (P0–P3) de lo que falta construir/corregir. Úsalo para
   descubrir gaps antes de planear trabajo.
+- **`/fin`** (`command/fin.md`): actualiza `docs/SESION.md` al cerrar una tarea
+  o sesión, dejando un traspaso claro (qué se hizo, qué queda, dónde quedó todo)
+  para que la próxima sesión arranque al día.
 
 ### Convención para añadir nuevos
 
