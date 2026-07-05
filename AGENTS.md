@@ -14,6 +14,10 @@ dilo y propón actualizarlo (puedes usar `/fin` al cerrar la tarea).
 Si sospechas que `SESION.md` está desactualizado o vas a retomar una tarea a
 medias (p. ej., cierre abrupto sin `/fin`), verifica el estado real con
 `git status --short` y `git log --oneline -5` antes de asumirlo.
+Cuando te pidan "mostrar el backlog", muestra el contenido de
+`docs/BACKLOG.md` tal cual (o solo sus secciones de tareas), **sin**
+reformatear ni auditar; `/backlog` es el comando para auditar y actualizar el
+archivo, no para mostrarlo rápido.
 
 ## 1. Qué es esto
 
