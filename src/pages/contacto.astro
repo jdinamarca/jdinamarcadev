@@ -202,6 +202,15 @@ import { SITE } from "../consts";
     font-size: var(--text-meta);
     color: var(--color-ink-soft);
     margin: 0;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity 0.3s var(--ease-blueprint),
+      transform 0.3s var(--ease-blueprint);
+  }
+  .form-status[data-state] {
+    opacity: 1;
+    transform: none;
   }
   .form-status[data-state="ok"] {
     color: var(--color-signal-deep);
@@ -273,7 +282,8 @@ import { SITE } from "../consts";
   @media (prefers-reduced-motion: reduce) {
     .field::after,
     .field label,
-    .form-ok {
+    .form-ok,
+    .form-status {
       transition: none;
     }
     .field:focus-within::after {
@@ -302,12 +312,12 @@ import { SITE } from "../consts";
 
   function clearSuccess() {
     window.clearTimeout(successTimer);
-    successTimer = undefined;
+    if (status) delete status.dataset.state;
     form?.classList.remove("is-success");
-    if (status) {
-      status.textContent = "";
-      delete status.dataset.state;
-    }
+    successTimer = window.setTimeout(() => {
+      if (status) status.textContent = "";
+      successTimer = undefined;
+    }, 300);
   }
 
   function setStatus(text: string, ok: boolean | null = null) {
