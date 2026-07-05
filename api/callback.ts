@@ -1,6 +1,6 @@
 interface VercelRequest {
   url?: string;
-  headers?: { cookie?: string };
+  headers?: Record<string, string | string[] | undefined>;
 }
 
 interface VercelResponse {
@@ -61,11 +61,14 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse,
 ): Promise<void> {
-  const url = new URL(req.url ?? "https://jdinamarca.dev");
+  const proto = req.headers?.["x-forwarded-proto"] ?? "https";
+  const host = req.headers?.host ?? "jdinamarca.dev";
+  const base = `${proto}://${host}`;
+  const url = new URL(req.url ?? "/", base);
   const code = url.searchParams.get("code");
   const returnedState = url.searchParams.get("state");
 
-  const cookie = req.headers?.cookie ?? "";
+  const cookie = (req.headers?.cookie as string | undefined) ?? "";
   const expectedState = (cookie.match(/oauth_state=([^;]+)/) ?? [, ""])[1];
 
   if (!code || !returnedState || returnedState !== expectedState) {
@@ -82,7 +85,7 @@ export default async function handler(
     return;
   }
 
-  const origin = url.origin;
+  const origin = base;
   const redirectUri = `${origin}/api/callback`;
 
   try {

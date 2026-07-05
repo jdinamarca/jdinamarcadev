@@ -1,5 +1,6 @@
 interface VercelRequest {
   url?: string;
+  headers?: Record<string, string | string[] | undefined>;
 }
 
 interface VercelResponse {
@@ -15,7 +16,9 @@ export default function handler(req: VercelRequest, res: VercelResponse): void {
     return;
   }
 
-  const origin = new URL(req.url ?? "https://jdinamarca.dev").origin;
+  const proto = req.headers?.["x-forwarded-proto"] ?? "https";
+  const host = req.headers?.host ?? "jdinamarca.dev";
+  const origin = `${proto}://${host}`;
   const redirectUri = `${origin}/api/callback`;
   const state = crypto.randomUUID();
 
