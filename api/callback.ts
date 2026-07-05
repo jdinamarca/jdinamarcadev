@@ -24,7 +24,7 @@ function renderHandshake(payload: { token?: string; error?: string }): string {
   </style>
 </head>
 <body>
-  <p>Completando inicio de sesión con GitHub…</p>
+  <p id="status">Completando inicio de sesión con GitHub…</p>
   <script>
     (function () {
       var provider = ${JSON.stringify(PROVIDER)};
@@ -32,25 +32,67 @@ function renderHandshake(payload: { token?: string; error?: string }): string {
       var token = ${tokenLiteral};
       var error = ${errorLiteral};
       var payload = token ? { provider: provider, token: token } : { provider: provider, error: error };
+      var status = document.getElementById("status");
+      var log = function (msg) {
+        try { console.log("[oauth-callback] " + msg); } catch (e) {}
+      };
+      var echoed = false;
+      var ticks = 0;
 
-      function announce() {
-        if (window.opener) {
-          window.opener.postMessage("authorizing:" + provider, "*");
+      log("loaded; opener=" + (!!window.opener) + " origin=" + window.location.origin + " result=" + result + " hasToken=" + !!token);
+
+      function setStatus(msg) { if (status) { status.textContent = msg; } }
+
+      function sendAuthorization(targetOrigin) {
+        if (!window.opener) { log("sendAuthorization: sin opener"); return false; }
+        try {
+          window.opener.postMessage(
+            "authorization:" + provider + ":" + result + ":" + JSON.stringify(payload),
+            targetOrigin
+          );
+          log("authorization -> " + targetOrigin);
+          return true;
+        } catch (e) { log("sendAuthorization falló: " + e); return false; }
+      }
+
+      function onMessage(e) {
+        log("recv from " + e.origin + " data=" + e.data);
+        if (e.data === "authorizing:" + provider) {
+          echoed = true;
+          clearInterval(timer);
+          sendAuthorization(e.origin);
+          setStatus("Sesión confirmada. Cerrando…");
+          window.removeEventListener("message", onMessage);
+          setTimeout(function () { log("closing popup"); window.close(); }, 300);
         }
       }
 
-      window.addEventListener("message", function (e) {
-        if (e.data === "authorizing:" + provider) {
-          window.opener.postMessage(
-            "authorization:" + provider + ":" + result + ":" + JSON.stringify(payload),
-            e.origin
-          );
-          window.removeEventListener("message", arguments.callee);
-          setTimeout(function () { window.close(); }, 200);
-        }
-      });
+      function announce() {
+        if (!window.opener) { return; }
+        try {
+          window.opener.postMessage("authorizing:" + provider, window.location.origin);
+        } catch (e) { log("announce failed: " + e); }
+      }
 
+      window.addEventListener("message", onMessage);
       announce();
+
+      var timer = setInterval(function () {
+        ticks++;
+        if (echoed || ticks > 20) { clearInterval(timer); return; }
+        announce();
+        if (ticks >= 4) {
+          log("sin echo tras " + (ticks * 0.5) + "s — fallback: envío directo de authorization");
+          sendAuthorization("*");
+          setStatus("Confirmando sesión con el editor…");
+        }
+        if (ticks === 20) {
+          log("FIN: opener=" + !!window.opener + " echoed=" + echoed);
+          setStatus(window.opener
+            ? "Si el editor no reacciona, vuelve a la pestaña del CMS e inténtalo de nuevo."
+            : "No se encontró la ventana del editor. Cierra e inténtalo de nuevo.");
+        }
+      }, 500);
     })();
   </script>
 </body>
