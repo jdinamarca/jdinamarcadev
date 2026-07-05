@@ -33,65 +33,49 @@ function renderHandshake(payload: { token?: string; error?: string }): string {
       var error = ${errorLiteral};
       var payload = token ? { provider: provider, token: token } : { provider: provider, error: error };
       var status = document.getElementById("status");
-      var log = function (msg) {
-        try { console.log("[oauth-callback] " + msg); } catch (e) {}
-      };
       var echoed = false;
       var ticks = 0;
 
-      log("loaded; opener=" + (!!window.opener) + " origin=" + window.location.origin + " result=" + result + " hasToken=" + !!token);
-
       function setStatus(msg) { if (status) { status.textContent = msg; } }
 
-      function sendAuthorization(targetOrigin) {
-        if (!window.opener) { log("sendAuthorization: sin opener"); return false; }
-        try {
-          window.opener.postMessage(
-            "authorization:" + provider + ":" + result + ":" + JSON.stringify(payload),
-            targetOrigin
-          );
-          log("authorization -> " + targetOrigin);
-          return true;
-        } catch (e) { log("sendAuthorization falló: " + e); return false; }
-      }
-
       function onMessage(e) {
-        log("recv from " + e.origin + " data=" + e.data);
         if (e.data === "authorizing:" + provider) {
           echoed = true;
           clearInterval(timer);
-          sendAuthorization(e.origin);
-          setStatus("Sesión confirmada. Cerrando…");
+          try {
+            window.opener.postMessage(
+              "authorization:" + provider + ":" + result + ":" + JSON.stringify(payload),
+              e.origin
+            );
+            setStatus("Sesión confirmada. Cerrando…");
+          } catch (err) {
+            setStatus("Error al confirmar la sesión.");
+          }
           window.removeEventListener("message", onMessage);
-          setTimeout(function () { log("closing popup"); window.close(); }, 300);
+          setTimeout(function () { window.close(); }, 300);
         }
       }
 
       function announce() {
-        if (!window.opener) { return; }
-        try {
+        if (window.opener) {
           window.opener.postMessage("authorizing:" + provider, window.location.origin);
-        } catch (e) { log("announce failed: " + e); }
+        }
       }
 
       window.addEventListener("message", onMessage);
       announce();
 
       var timer = setInterval(function () {
+        if (echoed) { clearInterval(timer); return; }
         ticks++;
-        if (echoed || ticks > 20) { clearInterval(timer); return; }
-        announce();
-        if (ticks >= 4) {
-          log("sin echo tras " + (ticks * 0.5) + "s — fallback: envío directo de authorization");
-          sendAuthorization("*");
-          setStatus("Confirmando sesión con el editor…");
-        }
-        if (ticks === 20) {
-          log("FIN: opener=" + !!window.opener + " echoed=" + echoed);
+        if (ticks > 6) {
+          clearInterval(timer);
           setStatus(window.opener
-            ? "Si el editor no reacciona, vuelve a la pestaña del CMS e inténtalo de nuevo."
+            ? "El editor no respondió. Vuelve a la pestaña del CMS e inténtalo de nuevo."
             : "No se encontró la ventana del editor. Cierra e inténtalo de nuevo.");
+          return;
         }
+        announce();
       }, 500);
     })();
   </script>
@@ -104,7 +88,7 @@ export default async function handler(
   res: VercelResponse,
 ): Promise<void> {
   const proto = req.headers?.["x-forwarded-proto"] ?? "https";
-  const host = req.headers?.host ?? "jdinamarca.dev";
+  const host = req.headers?.host ?? "www.jdinamarca.dev";
   const base = `${proto}://${host}`;
   const url = new URL(req.url ?? "/", base);
   const code = url.searchParams.get("code");
