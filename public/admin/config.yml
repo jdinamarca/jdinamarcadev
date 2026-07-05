@@ -1,0 +1,41 @@
+# Config de Sveltia/Decap CMS para el blog de Jason Dinamarca.
+# Local: usar con `npx decap-server` (ver local_backend). Producción: proxy OAuth (Fase 2).
+
+local_backend: true
+
+backend:
+  name: github
+  repo: jdinamarca/jdinamarcadev
+  branch: main
+  base_url: https://jdinamarca.dev
+  auth_endpoint: /api/auth
+
+site_url: https://jdinamarca.dev
+display_url: https://github.com/jdinamarca/jdinamarcadev
+
+media_folder: "public/images/blog"
+public_folder: "/images/blog"
+
+collections:
+  - name: "blog"
+    label: "Blog"
+    label_singular: "Publicación"
+    description: "Entradas del blog. Las marcadas como borrador no se publican en el sitio."
+    folder: "src/content/blog"
+    create: true
+    delete: true
+    extension: "mdx"
+    format: "frontmatter"
+    slug: "{{slug}}"
+    summary: "{{title}} — {{pubDate}}"
+    sortable_fields: ["pubDate", "title"]
+    fields:
+      - { label: "Título", name: "title", widget: "string" }
+      - { label: "Descripción", name: "description", widget: "string" }
+      - { label: "Fecha de publicación", name: "pubDate", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false }
+      - { label: "Actualizado el", name: "updatedDate", widget: "datetime", date_format: "YYYY-MM-DD", time_format: false, required: false }
+      - { label: "Borrador (no publicar)", name: "draft", widget: "boolean", default: true }
+      - { label: "Imagen de portada", name: "heroImage", widget: "image", required: false }
+      - { label: "Texto alternativo de la imagen", name: "heroAlt", widget: "string", required: false }
+      - { label: "Etiquetas", name: "tags", widget: "list", required: false }
+      - { label: "Contenido", name: "body", widget: "markdown" }

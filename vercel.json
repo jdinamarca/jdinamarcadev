@@ -3,9 +3,19 @@
     "api/contact.ts": {
       "memory": 256,
       "maxDuration": 10
+    },
+    "api/auth.ts": {
+      "memory": 256,
+      "maxDuration": 10
+    },
+    "api/callback.ts": {
+      "memory": 256,
+      "maxDuration": 10
     }
   },
   "rewrites": [
-    { "source": "/api/contact", "destination": "/api/contact" }
+    { "source": "/api/contact", "destination": "/api/contact" },
+    { "source": "/api/auth", "destination": "/api/auth" },
+    { "source": "/api/callback", "destination": "/api/callback" }
   ]
 }

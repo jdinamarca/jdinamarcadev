@@ -55,6 +55,19 @@ const { data } = post;
       <span class="draw-rule post__rule" aria-hidden="true"></span>
     </header>
 
+    {
+      data.heroImage && (
+        <figure class="shell post__hero">
+          <img
+            src={data.heroImage}
+            alt={data.heroAlt ?? data.title}
+            loading="eager"
+            decoding="async"
+          />
+        </figure>
+      )
+    }
+
     <div class="shell post__body">
       <div class="prose-blueprint">
         <slot />
@@ -146,6 +159,19 @@ const { data } = post;
   }
   .post__body {
     padding-top: 2.5rem;
+  }
+  .post__hero {
+    margin: 2rem 0 0;
+    border: 1px solid var(--color-line);
+    background: var(--color-paper);
+    overflow: hidden;
+  }
+  .post__hero img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200 / 630;
+    object-fit: cover;
   }
   .prose-blueprint {
     font-size: var(--text-body);

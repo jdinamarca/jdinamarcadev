@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Editor · Jason Dinamarca</title>
+    <link rel="icon" href="/favicon.svg" />
+    <script type="module" src="https://unpkg.com/@sveltia/cms"></script>
+    <script>
+      // Respaldo: los module scripts no exponen `document.currentScript`, por lo que
+      // la auto-init de Sveltia puede no dispararse. Forzamos init() al cargar.
+      window.addEventListener('load', () => {
+        if (window.initCMS) window.initCMS();
+      });
+    </script>
+  </head>
+  <body>
+    <!-- Sveltia CMS monta la UI aquí. Lee /admin/config.yml automáticamente. -->
+  </body>
+</html>
