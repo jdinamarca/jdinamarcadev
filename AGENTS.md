@@ -11,6 +11,9 @@ decisiones clave). `docs/BACKLOG.md` es el backlog priorizado de más largo
 alcance; `DECISIONS.md`, el historial de decisiones arquitectónicas. Si
 `docs/SESION.md` no existe o está claramente desactualizado, no lo inventes:
 dilo y propón actualizarlo (puedes usar `/fin` al cerrar la tarea).
+Si sospechas que `SESION.md` está desactualizado o vas a retomar una tarea a
+medias (p. ej., cierre abrupto sin `/fin`), verifica el estado real con
+`git status --short` y `git log --oneline -5` antes de asumirlo.
 
 ## 1. Qué es esto
 
