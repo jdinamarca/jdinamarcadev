@@ -1,6 +1,6 @@
 # Backlog
 
-Estado auditado el 2026-07-02 contra `AGENTS.md`, `DECISIONS.md` y `CHANGELOG.md`.
+Estado auditado el 2026-07-05 contra `AGENTS.md`, `DECISIONS.md` y `CHANGELOG.md`.
 Prioridades: **P1** (bloqueante / rompe convención o accesibilidad), **P2** (importante
 para producción), **P3** (nice-to-have / deuda técnica menor).
 
@@ -26,9 +26,6 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
       existan portadas finales. Toca también el `og:image` en `[slug].astro`.
 
 ### P3 — Baja / deuda técnica
-- [ ] **[UX] Tagbar de `/blog` no filtra.** Las etiquetas son `<span>` decorativas
-      (`blog/index.astro`): parecen clicables pero no enlazan. Convertirlas en links a
-      `/blog/tag/:tag` (con su ruta) o quitar la apariencia interactiva.
 - [ ] **[Testing] No hay tests ni runner.** Sin script `test` ni archivos `*.test.ts`.
       Añadir mínimo: `readingTime` (`blog/[...slug].astro`), `FormattedDate` y validación
       de frontmatter de collections.
@@ -37,11 +34,6 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
       `matchMedia`.
 - [ ] **[Contenido] `readingTime` puede inflarse** porque cuenta markup/código de MDX
       (`post.body.split(/\s+/)`). Considerar texto plano para el conteo.
-- [ ] **[Workflow] Facilitar la creación de publicaciones del blog.** Hoy los posts se
-      crean copiando un `.mdx` existente a mano. Definir el flujo: (a) **scaffold CLI**
-      `npm run new-post` que genere el archivo con frontmatter base (`title`, `description`,
-      `pubDate`, `tags`, `draft`) a partir de un título, o (b) **CMS/panel** (Decap/Tina/
-      admin). Confirmar alcance antes de implementar.
 
 ---
 
@@ -57,12 +49,19 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ---
 
 ## 🎨 UX/UI
-- [ ] Tagbar de `/blog` no funcional (ver P3).
 - [ ] Revisar contraste del `border-color` de foco de inputs una vez restaurado el outline.
 
 ---
 
 ## ✅ Completado (verificado en esta auditoría)
+- [x] **[UX] Tagbar de `/blog` funcional.** Chips de temas ahora son `<a>` que enlazan a
+      `/blog/tag/<slug>` (slug NFKD lower-kebab); cada tag tiene su página estática con
+      los posts filtrados (`src/pages/blog/tag/[tag].astro`, `getStaticPaths`).
+- [x] **[Feature / Workflow] Facilitar la creación de publicaciones del blog (CMS).**
+      Adoptada la opción (b) del ítem original: CMS Sveltia + proxy OAuth propio
+      (`api/auth.ts` + `api/callback.ts`), deploy en `https://www.jdinamarca.dev/admin`.
+      Login con GitHub (LDAP+OTP, .rdp firmados, scopes `repo,user`); commits directos a
+      `main` desde el editor. Scaffold CLI (opción a) ya no es necesario.
 - [x] **[UX] Animar el formulario de contacto (micro-interacciones blueprint).** Línea
       `signal` que se dibuja bajo el campo activo, label que pasa a `signal-deep`, scan del
       botón durante el envío y check animado al éxito. Todo con fallback estático tras
