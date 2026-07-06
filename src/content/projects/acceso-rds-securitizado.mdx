@@ -1,6 +1,6 @@
 ---
-title: "Tigo Virtual Access: acceso RDS securitizado en 7 capas"
-summary: "Diseñé Tigo Virtual Access, la capa de securitización de accesos RDS: siete capas independientes (MFA LDAP+TOTP, JWT, RBAC por SID, firma RSA-SHA256 del .rdp, sesión efímera one-shot, auditoría inmutable y hardening de BD) bajo el principio de que ninguna capa confía en la anterior. Habilitó la migración AVD→RDS (USD 37 K/mes) cumpliendo NIST AAL2 e ISO 27001."
+title: "Acceso RDS securitizado en 7 capas"
+summary: "Diseñé la capa de securitización de accesos RDS: siete capas independientes (MFA LDAP+TOTP, JWT, RBAC por SID, firma RSA-SHA256 del .rdp, sesión efímera one-shot, auditoría inmutable y hardening de BD) bajo el principio de que ninguna capa confía en la anterior. Habilitó la migración AVD→RDS (USD 37 K/mes) cumpliendo NIST AAL2 e ISO 27001."
 client: "Confidencial · Corporate"
 role: "Arquitecto de Software Líder"
 year: "2026"
@@ -14,7 +14,7 @@ coverAlt: "Diagrama esquemático de las capas de seguridad del broker RDS"
 
 ## Contexto
 
-La organización migraba sus escritorios virtuales desde Azure Virtual Desktop (AVD) a RDS propio, con la infraestructura desplegada por el equipo de plataforma. El modelo nativo de RDS entrega a los usuarios archivos `.rdp` protegidos solo por credenciales: copiables, reenviables y reutilizables, sin doble factor ni control granular por aplicación. Mi alcance fue diseñar **Tigo Virtual Access**, la capa de securitización del acceso, para que la migración cumpliera los estándares internos (NIST SP 800-63B, ISO 27001, OWASP).
+La organización migraba sus escritorios virtuales desde Azure Virtual Desktop (AVD) a RDS propio, con la infraestructura desplegada por el equipo de plataforma. El modelo nativo de RDS entrega a los usuarios archivos `.rdp` protegidos solo por credenciales: copiables, reenviables y reutilizables, sin doble factor ni control granular por aplicación. Mi alcance fue diseñar **la capa de securitización del acceso**, para que la migración cumpliera los estándares internos (NIST SP 800-63B, ISO 27001, OWASP).
 
 El principio rector fue **defensa en profundidad**: siete capas independientes, ninguna confiando en la anterior.
 
