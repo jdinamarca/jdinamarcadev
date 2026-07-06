@@ -1,0 +1,50 @@
+---
+title: "Infraestructura Azure de producción para plataforma de gestión de equipos médicos"
+summary: "Diseñé e implementé la infraestructura Azure de producción de una plataforma de gestión de equipos médicos (NestJS + Prisma + PostgreSQL + Next.js + Expo): Resource Group aislado, VNet privada con PostgreSQL sin acceso público, Key Vault con secretos fuera del repo, Container Apps inyectados en la VNet con Managed Identity y CI/observabilidad. Cap explícito por debajo de los USD 300/mes."
+client: "Confidencial · HealthTech"
+role: "Arquitecto de Software y DevOps"
+year: "2026"
+stack: ["Azure", "Container Apps", "PostgreSQL Flexible Server", "VNet", "Azure Key Vault", "ACR", "Azure Monitor", "Vercel"]
+disciplines: ["Arquitectura", "Infraestructura", "Seguridad", "DevOps"]
+featured: false
+order: 2
+cover: "/images/covers/cover-04.svg"
+coverAlt: "Diagrama esquemático de la red privada con Container Apps y PostgreSQL"
+---
+
+## Contexto
+
+La plataforma es un monorepo (NestJS + Prisma + PostgreSQL para la API; Next.js para el panel web; Expo/RN para la app móvil) que ya operaba en un ambiente de certificación. Me tocó diseñar e implementar desde cero la **infraestructura Azure de producción**, cumpliendo una premisa no negociable: la base de datos debía quedar **privada en una VNet**, sin endpoint público. El presupuesto era estricto — menos de **USD 300/mes**.
+
+El runner-ship era mío de punta a punta: comandos de `az`, armado del ambiente, secretos, identidad administrada, CI/CD y alertas.
+
+## Decisión de arquitectura
+
+**1. Aislamiento.** Resource Group dedicado para producción dentro de la subscription, pensado para ser renombrado o migrado a una subscription dedicada sin colisionar.
+
+**2. Networking privado (VNet).** Tres subnets: una para **Container Apps** (delegada al runtime de containers), otra para **PostgreSQL** y otra para **Private Endpoints** (hardening futuro). Private DNS Zone atada a la VNet para resolver el FQDN del servidor de base de datos desde adentro.
+
+**3. PostgreSQL privado.** `Flexible Server` en su subnet delegada, con **`publicNetworkAccess: Disabled`** — no hay IP pública en la BD, ni tráfico de red expuesto desde internet. Migraciones y seeds corren **dentro** de la VNet (la API ejecuta `prisma migrate deploy` al boot, o un Container Apps Job efímero en el entorno). Se arrancó **sin HA** para mantenerse bajo el cap, con una ruta documentada para habilitarla sin downtime.
+
+**4. Secretos fuera del repo (Key Vault con RBAC).** Generación de claves nuevas (`JWT access / refresh / MFA`, `CSRF`, `password reset`, `email verification`, `blob encryption`), JWK ECDH P-256 para operaciones criptográficas y la `DATABASE_URL` apuntando al FQDN privado. RBAC en vez de access policies, y la carga sensible la hago yo contra el Vault.
+
+**5. Identidad sin secretos en runtime (Managed Identity).** Los Container Apps usan **identidad administrada system-assigned**: la API arranca sin connection string ni API keys, y recibe permisos finos — `Key Vault Secrets User` y `Storage Blob Data Contributor` — vía rol. La cadena de custodia del secreto deja de depender del entorno.
+
+**6. ACR + Storage endurecido.** Container Registry estándar para imágenes; Storage **Geo-Redundant** con **acceso público por clave deshabilitado**, **soft-delete 7 días** y **versionado** activo para recuperación de evidencias técnicas.
+
+**7. Observabilidad sin gasto extra.** Log Analytics como colector, **Application Insights** conectado al workspace y al entorno de Container Apps para trazas y métricas. Sin agentes en la app: instrumentación nativa en runtime.
+
+**8. CI/CD y guardianes.** Service Principal acotado al RG, secretos por ambiente (`*_PROD`) en el pipeline, workflows separados para API y web, y `main` protegido (revisión + status check + sin force-push).
+
+**9. Alertas operativas.** Acciones configuradas en Azure Monitor para 5xx de la API, disponibilidad del proveedor de base de datos y proximidad al presupuesto.
+
+> Seguridad orgánica: si una capa queda mal configurada, las demás contienen — la BD sigue inalcanzable desde internet y los secretos siguen sin pisar el repositorio.
+
+## Resultado
+
+- Reusable runbook paso a paso: cualquier compañero puede levantar la infra con un desde-cero reproducible.
+- PostgreSQL con `publicNetworkAccess: Disabled`, dentro de la VNet. **Auditado operativamente** — sin exposición a internet de la base de datos.
+- Secretos **cero** en el repo y **cero** en variables de entorno en runtime: la API los resuelve contra Key Vault con Managed Identity.
+- Cap operativo respetado a largo plazo bajo presupuesto exigido (≤ USD 300/mes) gracias a elegir General Purpose sin HA inicial, SKU chica de PostgreSQL y perimetrales nativas del runtime.
+- Observabilidad trazable: logs y métricas centralizados por workspace, exportables.
+- Camino de hardening documentado: Private Endpoints para KV y Storage, HA habilitable sin downtime.
