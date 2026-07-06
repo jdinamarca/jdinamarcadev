@@ -111,13 +111,31 @@ import { SITE } from "../consts";
       }
     };
 
-    window.addEventListener("mousemove", (e) => {
+    const onMove = (e: MouseEvent) => {
       mx = e.clientX;
       my = e.clientY;
       raf();
-    });
-    window.addEventListener("scroll", raf, { passive: true });
-    window.addEventListener("resize", raf);
-    update();
+    };
+
+    const mq = window.matchMedia("(min-width: 768px)");
+    const start = () => {
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("scroll", raf, { passive: true });
+      window.addEventListener("resize", raf);
+      update();
+    };
+    const stop = () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("scroll", raf);
+      window.removeEventListener("resize", raf);
+    };
+
+    const handle = (e: MediaQueryListEvent | MediaQueryList) => {
+      if (e.matches) start();
+      else stop();
+    };
+
+    if (mq.matches) start();
+    mq.addEventListener("change", handle);
   }
 </script>
