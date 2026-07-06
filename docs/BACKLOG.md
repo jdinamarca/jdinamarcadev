@@ -29,9 +29,6 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 - [ ] **[Testing] No hay tests ni runner.** Sin script `test` ni archivos `*.test.ts`.
       Añadir mínimo: `readingTime` (`blog/[...slug].astro`), `FormattedDate` y validación
       de frontmatter de collections.
-- [ ] **[Perf menor] `CoordReadout` registra listeners en móvil** pese a estar
-      `display:none` bajo 768px. Guardar el registro de `mousemove`/`scroll` tras el mismo
-      `matchMedia`.
 - [ ] **[Contenido] `readingTime` puede inflarse** porque cuenta markup/código de MDX
       (`post.body.split(/\s+/)`). Considerar texto plano para el conteo.
 
@@ -54,7 +51,10 @@ para producción), **P3** (nice-to-have / deuda técnica menor).
 ---
 
 ## ✅ Completado (verificado en esta auditoría)
-- [x] **[UX] Tagbar de `/blog` funcional.** Chips de temas ahora son `<a>` que enlazan a
+- [x] **[Perf menor] `CoordReadout` solo registra listeners con la UI visible.** Los
+      handlers de `mousemove`/`scroll`/`resize` ahora se registran según
+      `matchMedia("(min-width: 768px)")` y alternan en el `change` (start/stop),
+      evitando trabajo en `<768px` donde `.coord-readout` es `display:none`. Chips de temas ahora son `<a>` que enlazan a
       `/blog/tag/<slug>` (slug NFKD lower-kebab); cada tag tiene su página estática con
       los posts filtrados (`src/pages/blog/tag/[tag].astro`, `getStaticPaths`).
 - [x] **[Feature / Workflow] Facilitar la creación de publicaciones del blog (CMS).**
