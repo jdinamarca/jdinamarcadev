@@ -12,7 +12,7 @@ export const SITE = {
   coords: { x: "33.438 S", y: "70.634 W" },
   social: [
     { label: "GitHub", href: "https://github.com/jdinamarca" },
-    { label: "LinkedIn", href: "https://www.linkedin.com/in/jdinamarca" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/jasondinamarca" },
     { label: "RSS", href: "/rss.xml" },
   ],
 } as const;
