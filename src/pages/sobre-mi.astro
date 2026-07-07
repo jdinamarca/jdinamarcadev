@@ -24,6 +24,12 @@ const timeline = [
   { year: "2023", role: "Arquitecto de Datos", org: "Investigación clínica", note: "Lakehouse y gobierno de datos." },
   { year: "2018", role: "Ingeniero Senior", org: "Producto SaaS", note: "Fundaciones de plataforma multi-tenant." },
 ];
+
+const favs = [
+  { k: "Libro", v: "The Catcher in the Rye" },
+  { k: "Género", v: "Ciencia ficción" },
+  { k: "Película", v: "Midnight in Paris" },
+];
 ---
 
 <BaseLayout
@@ -103,6 +109,25 @@ const timeline = [
         ))
       }
     </ol>
+  </section>
+
+  <section class="shell section">
+    <SectionHeading index="§06" label="Favoritos" title="Fuera del editor" />
+    <ul class="focuslist favlist">
+      {
+        favs.map((f, i) => (
+          <li class="focuslist__item favlist__item">
+            <span class="focuslist__no">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <div>
+              <span class="favlist__kind">{f.k}</span>
+              <h3 class="favlist__value">{f.v}</h3>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
   </section>
 </BaseLayout>
 
@@ -268,5 +293,26 @@ const timeline = [
     color: var(--color-ink-soft);
     margin: 0;
     max-width: 50ch;
+  }
+
+  .favlist .focuslist__item {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .favlist__kind {
+    font-family: var(--font-mono);
+    font-size: var(--text-micro);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-mono);
+    border: 1px solid var(--color-line);
+    padding: 0.2rem 0.5rem;
+    color: var(--color-ink-soft);
+    align-self: flex-start;
+  }
+  .favlist__value {
+    font-size: var(--text-h3);
+    margin: 0;
+    color: var(--color-ink);
+    max-width: 32ch;
   }
 </style>
