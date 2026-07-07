@@ -1,0 +1,53 @@
+---
+title: "Plataforma interna de ingeniería: flujos DevOps, automatizaciones e inventario"
+summary: "Diseñé e implementé como programador principal una plataforma interna de ingeniería que centraliza los flujos DevOps, automatiza la creación de infraestructura (namespaces en OpenShift, bases de datos PostgreSQL y MongoDB) y mantiene un inventario único de VMs on‑premise, cloud e infraestructura física. Backend en Nest + front en Angular, desplegado en OpenShift."
+client: "Confidencial · Telecom"
+role: "Programador principal · Arquitectura y despliegues"
+year: "2026"
+stack: ["NestJS", "Angular", "OpenShift", "PostgreSQL", "MongoDB", "Ansible", "Terraform", "Prometheus"]
+disciplines: ["Arquitectura", "DevOps", "Plataforma interna", "Automatización"]
+featured: true
+order: 3
+cover: "/images/covers/cover-05.svg"
+coverAlt: "Diagrama esquemático de la plataforma de ingeniería: workflows, automatizaciones e inventario"
+---
+
+## Contexto
+
+La organización necesitaba una **plataforma interna de ingeniería** que sirviera como punto único para los flujos DevOps del día a día: crear y gobernar infraestructura de aplicación bajo demanda, mantener actualizado el inventario de toda la base instalada y exponerlo a través de un único producto usable por ingeniería y operaciones.
+
+Diseñé e implementé el sistema de punta a punta como programador principal: arquitectura, backend, frontend, automatizaciones y despliegues en OpenShift. Hoy sigue en producción y recibiendo evoluciones (nuevas automatizaciones, nuevos tipos de inventario y refinamiento de los workflows existentes).
+
+## Decisión de arquitectura
+
+**1. Un único producto, tres dominios cohesionados.** La plataforma se modeló como un backend de tres dominios interrelacionados — *workflows*, *automatizaciones* e *inventario* — sobre un mismo modelo de dominio (solicitudes, recursos aprovisionados y activos registrados). Front Angular expone una sola consola donde conviven los flujos.
+
+**2. Workflows de aprobación self‑service.** Cualquier usuario de ingeniería puede solicitar infraestructura declarativa (namespace en OpenShift, bases de datos nuevas, capacidad, topología). El workflow conduce la solicitud a través de aprobación y entrega; una vez aprobado, se traduce a una tarea de aprovisionamiento. El motor de workflows vive en el backend Nest, es auditable y desacoplado del runner.
+
+**3. Automatizaciones de infraestructura idempotentes.** Las aprobaciones disparan *runners* que ejecutan planes consistentes (Ansible para los pasos de configuración, Terraform para la infraestructura esperada). Diseño idempotente: ejecutar varias veces produce el mismo estado; un fallo en mitad del plan reintenta sin derivar. Esto permite “apretar el botón de nuevo” sin miedo a doble provisionar.
+
+**4. Provisionamiento de namespaces en OpenShift.** El backend reserva el namespace en el cluster target (etiquetado por entorno/equipo), aplica las cuotas y límites de capacidad y entrega al solicitante un punto de anclaje para sus manifiestos posteriores.
+
+**5. Provisionamiento de bases de datos PostgreSQL y MongoDB.** Crea la base, el usuario, los roles y los parámetros de conexión; registra los secretos en el almacén corporativo y devuelve al solicitante un bloque listo para integrarlo como variables de entorno. La operación deja trazabilidad — quién pidió, cuándo, con qué parámetros.
+
+**6. Inventario unificado multi‑fuente.** La plataforma mantiene un inventario con vida propia: *on‑premise* (hipervisores, bare‑metal), *cloud pública* (AWS/Azure/GCP según corresponda) e *infraestructura física* (hosts, ubicaciones, etiquetas). Cada fuente alimenta un normalizador común: todos los activos terminan siendo del mismo modelo y consumibles por la misma API.
+
+**7. Discovery automático y conciliación.** Un job periódico descubre recursos (APIs de cloud, libvirt/vSphere, agentes físicos) y los concilia contra el inventario existente; notifica diferencias y resuelve las altas/bajas de manera controlada.
+
+**8. RBAC y seguridad operativa.** Permisos finos por equipo/rol (quien puede pedir qué tipo de recurso, quien puede aprobar, quien puede ver inventario sensible). Acciones registradas para auditoría.
+
+**9. Despliegue sobre OpenShift.** La propia plataforma se ejecuta sobre OpenShift: pipelines de CI que construyen imágenes inmutables, configuración por entorno vía ConfigMaps, secretos en el vault del cluster, healthchecks y réplicas como cualquier workload más de la organización.
+
+**10. Operabilidad para un equipo pequeño.** Telemetría básica (Prometheus expone métricas clave del runner y del inventario), logs estructurados y endpoints de diagnóstico para resolver rápido los fallos de aprovisionamiento.
+
+> El valor del producto no es solo entregar infraestructura — es que el equipo la pida, la inspeccione y la gobierne desde un mismo lugar, sin perder ni velocidad ni auditoría.
+
+## Resultado
+
+- Workflow único para solicitar infraestructura (OpenShift + bases de datos) con aprobaciones configurables y trazabilidad.
+- Automatizaciones idempotentes (Ansible + Terraform) reusables por la propia plataforma.
+- Inventario vivo multi‑fuente que se concilia automáticamente en cada ciclo de discovery.
+- Una única consola (Nest + Angular) para todo ingeniería y operaciones.
+- Plataforma desplegada sobre OpenShift y operada como cualquier workload interno más.
+
+> **Estado:** en producción, con evolución continua — se siguen incorporando automatizaciones, refinando workflows y conectando nuevas fuentes al inventario.
